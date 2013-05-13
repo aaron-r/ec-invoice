@@ -1,21 +1,35 @@
 * {
 	font-family:"Calibri";
-	font-size: 16px;
-
 }
 
 div.ClientSummary {
 	height: 80%;
-	width: 27.5%;
+	width: 22.5%;
 	overflow-x: hidden;
 	overflow-y: scroll;
 	float: left;
+	font-size: 16px;
+}
+
+table.ClientTable tr:nth-child(odd) {
+    background-color: #FEF0C9;
+}
+
+table.ClientTable tr:first-child {
+    background-color: #CDC0B0;
 }
 
 div.ClientDetail {
-	width: 60%;
+	width: 76.5%;
 	height: 80%;
 	float: left;
 	overflow-x: hidden;
 	overflow-y: scroll;
+	margin-left: 10px;
+}
+
+table.JobTable {
+	border-collapse:collapse;
+	font-size: 14px;
+	border-radius: 20px;
 }

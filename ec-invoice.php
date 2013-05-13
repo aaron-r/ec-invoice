@@ -8,7 +8,19 @@
 
 <?
 
-//error_reporting(0);
+// TO-DO LIST
+// ----------
+// . Generate grand-total of ALL invoices
+// . CSS styling (rounded div, alt colours)
+// . Change selected customer to GREEN (jQuery)
+// . Jump to top (ClientDetail) when new customer is selected
+
+// . Submit one job to MYOB - return invoice number
+// . Submit multiple jobs to MYOB - return invoice number
+// . Error-check: if item does not exist in MYOB
+// . Error check: if line exceeds 255 characters
+// . Auto e-mail from MYOB
+// . Auto print from MYOB
 
 $DatabaseHost 		= 'localhost';
 $DatabaseName 		= 'echips_v2';
@@ -26,7 +38,7 @@ $FirstQuery = $Database->query("SELECT DISTINCT(customers.lastname), customers.f
 								AND jobdetails.jobnumber = jobitems.jobnumber
 								AND jobdetails.datetimesheet IS NOT NULL AND jobdetails.invoicenumber IS NULL
 								GROUP BY customers.lastname
-								HAVING UnbilledJobs > 1");
+								HAVING UnbilledJobs > 0");
 
 foreach($FirstQuery as $row) {
 	$CardID[$CounterStart] 				= $row['cardid'];
@@ -41,26 +53,28 @@ foreach($FirstQuery as $row) {
 
 <script>
 
-function gather(cardid) {		// function gather(cardid)
+function GetJobDetails(cardid) {
 	
 	$.ajax({
 		url: "query.php",
 		type: "POST",
 		data: {input : cardid},
 		success: function(data) {
-			$('#results').html(data);
+			$('#DisplayJobDetails').html(data);
 		}
 	});
+	
+	$(this).css("background-color", "green");
 
 };
 
 </script>
 
 <div class="ClientSummary">
-<table border=1>
+<table class="ClientTable" cellspacing="0" >
 <tr>
 <td><b>Customer</b></td>
-<td></td>			<!-- Jobs Unbilled -->
+<td style="width:30px"></td>	<!-- Jobs Unbilled -->
 <td><b>Value</b></td>
 </tr>
 
@@ -69,7 +83,7 @@ function gather(cardid) {		// function gather(cardid)
 foreach($CardID as $value) {
 	echo '
 	<tr>
-	<td><a href="" onclick="gather('.$CardID[$CounterDisplay].'); return false;">'. $CustomerLastName[$CounterDisplay] .' '. $CustomerFirstName[$CounterDisplay] .'</a></td>
+	<td><a href="" onclick="GetJobDetails('.$CardID[$CounterDisplay].'); return false;">'. $CustomerLastName[$CounterDisplay] .' '. $CustomerFirstName[$CounterDisplay] .'</a></td>
 	<td><b>'. $UnbilledJobs[$CounterDisplay] .'</b></td>
 	<td> $'. $JobTotalValue[$CounterDisplay] .'</td>
 	</tr>';
@@ -83,7 +97,7 @@ foreach($CardID as $value) {
 
 <div class="ClientDetail">
 
-<h2 id="results">foobar</h2>
+<span id="DisplayJobDetails"></span>
 
 </div>
 
