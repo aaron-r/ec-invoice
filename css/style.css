@@ -4,23 +4,24 @@
 
 div.ClientSummary {
 	height: 80%;
-	width: 22.5%;
+	width: 28%;
 	overflow-x: hidden;
 	overflow-y: scroll;
 	float: left;
 	font-size: 16px;
 }
 
-table.ClientTable tr:nth-child(odd) {
+.ClientTable tr:nth-child(even) {
     background-color: #FEF0C9;
 }
 
-table.ClientTable tr:first-child {
+
+.ClientTable tr:first-child {
     background-color: #CDC0B0;
 }
 
 div.ClientDetail {
-	width: 76.5%;
+	width: 71%;
 	height: 80%;
 	float: left;
 	overflow-x: hidden;
@@ -28,8 +29,53 @@ div.ClientDetail {
 	margin-left: 10px;
 }
 
-table.JobTable {
-	border-collapse:collapse;
+table.JobTable tr td {
 	font-size: 14px;
-	border-radius: 20px;
+	vertical-align: text-top;
+}
+
+
+tr.JobBorder td {
+	border: 1px;
+	border-style: solid;
+	border-color: #C0C0C0;
+	border-left: 0px;
+	border-top: 0px;
+}
+
+td.JobTitle2 {
+	border-radius: 15px;
+	font-size: 48px;
+}
+
+td.JobTech {
+	width: 60px;
+	text-align: center;
+	border-left: 5px;
+	
+}
+
+td.JobCode {
+	width: 75px;
+}
+
+td.JobNotes {
+	width: 800px;
+}
+
+td.JobQty {
+	width: 60px;
+}
+
+a {
+	color:#000000;
+	text-decoration: none;
+}
+
+a:hover {
+	font-weight: bold;
+}
+
+.HighlightJob {
+	background-color: #7BCC78;
 }

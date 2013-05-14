@@ -7,11 +7,15 @@
 
 <?
 
+error_reporting(0);
+
 // TO-DO LIST
 // ----------
-// . Make sure 'Unit Price' and 'Line Total' stay same width on large lines (See: Alliance Contracting)
-// . Create EDITable fields
-// . CSS and finalize display output, text align
+// . Output Grand Total for customer
+// . Create a toggle 'edit' button (change bg-colour to red and have editable text)
+// . Ability to 'add' or 'delete' a new row for a job
+
+// . Finalise CSS design (rounded borders?)
 
 $DisplayCardID = $_POST['input'];
 
@@ -49,7 +53,7 @@ foreach($FirstQuery as $row) {
 }
 ?>
 
-<table class="JobTable" border=1>
+<table class="JobTable" cellspacing="0" border="0">
 
 <?
 
@@ -61,27 +65,26 @@ foreach($JobNumber as $value) {
 		$JobTotal = number_format(($JobTotal + $LineTotal), 2);
 		
 		echo '<tr bgcolor=E0E0FF>';
-		echo '<td> <input type=checkbox checked value='.$value.'> </td>';
-		echo '<td colspan=5> <b>&nbsp;Job #'.$JobNumber[$CounterDisplay] .' - '. $JobTitle[$CounterDisplay]. '</b> </td>';
+		echo '<td class="JobTitle2" colspan=6> <input type=checkbox checked value='.$value.'> <b>&nbsp;Job #'.$JobNumber[$CounterDisplay] .' - '. $JobTitle[$CounterDisplay]. '</b> </td>';
 		echo '</tr>';
 		
 		// TO-DO: Make sure 'Unit Price' and 'Line Total' stay same width on large lines (See: Alliance Contracting)
-		echo '<tr>
-			  <td>&nbsp;</td>
-			  <td>Qty</td>
-			  <td>Code</td>
+		echo '<tr class="JobBorder">
+			  <td class="JobTech">&nbsp;</td>
+			  <td class="JobQty">Qty</td>
+			  <td class="JobCode">Code</td>
 			  <td>Notes</td>
 			  <td>Unit Price</td>
 			  <td>Line Total</td>
 			  </tr>';
 		
-		echo '<tr>';
-		echo '<td bgcolor='.$TechColour[$CounterDisplay].'>'. $Tech[$CounterDisplay] .'</td>';
-		echo '<td>'. $JobQty[$CounterDisplay] .'</td>';
-		echo '<td>'. $JobCode[$CounterDisplay] .'</td>';
-		echo '<td>'. nl2br($JobNotes[$CounterDisplay]) .'</td>';
-		echo '<td> $'. number_format($JobPrice[$CounterDisplay], 2) .'</td>';
-		echo '<td> $'. $LineTotal .'</td>';
+		echo '<tr class="JobBorder">';
+		echo '<td class="JobTech" bgcolor='.$TechColour[$CounterDisplay].'>'. $Tech[$CounterDisplay] .'</td>';
+		echo '<td class="JobQty"> '. $JobQty[$CounterDisplay] .'</td>';
+		echo '<td class="JobCode">'. $JobCode[$CounterDisplay] .'</td>';
+		echo '<td class="JobNotes">'. nl2br($JobNotes[$CounterDisplay]) .'</td>';
+		echo '<td> <b>$</b>'. number_format($JobPrice[$CounterDisplay], 2) .'</td>';
+		echo '<td> <b>$</b>'. $LineTotal .'</td>';
 		echo '</tr>';
 		
 		$CounterDisplay++;
@@ -92,13 +95,13 @@ foreach($JobNumber as $value) {
 		$LineTotal = number_format(($JobQty[$CounterDisplay] * $JobPrice[$CounterDisplay]), 2);
 		$JobTotal = number_format(($JobTotal + $LineTotal), 2);
 	
-		echo '<tr>';
-		echo '<td bgcolor='.$TechColour[$CounterDisplay].'>'. $Tech[$CounterDisplay] .'</td>';
-		echo '<td>'. $JobQty[$CounterDisplay] .'</td>';
-		echo '<td>'. $JobCode[$CounterDisplay] .'</td>';
-		echo '<td>'. nl2br($JobNotes[$CounterDisplay]) .'</td>';
-		echo '<td> $'. number_format($JobPrice[$CounterDisplay], 2) .'</td>';
-		echo '<td> $'. $LineTotal .'</td>';
+		echo '<tr class="JobBorder">';
+		echo '<td class="JobTech" bgcolor='.$TechColour[$CounterDisplay].'>'. $Tech[$CounterDisplay] .'</td>';
+		echo '<td class="JobQty">'. $JobQty[$CounterDisplay] .'</td>';
+		echo '<td class="JobCode">'. $JobCode[$CounterDisplay] .'</td>';
+		echo '<td class="JobNotes">'. nl2br($JobNotes[$CounterDisplay]) .'</td>';
+		echo '<td> <b>$</b>'. number_format($JobPrice[$CounterDisplay], 2) .'</td>';
+		echo '<td> <b>$</b>'. $LineTotal .'</td>';
 		echo '</tr>';
 		
 		$CounterDisplay++;
@@ -109,11 +112,11 @@ foreach($JobNumber as $value) {
 		echo '<tr>
 			  <td colspan=4>&nbsp;</td>
 			  <td bgcolor="#FFEBCD">Total: </td>';
-		echo '<td class='.$value.'_Total bgcolor="#FFEBCD"> $'. $JobTotal .'</td>';
+		echo '<td class='.$value.'_Total bgcolor="#FFEBCD"> <b>$</b>'. $JobTotal .'</td>';
 		echo '</tr>';
 		
 		echo '<tr>
-		<td colspan=5">&nbsp;</td>
+		<td colspan=2">&nbsp;</td>
 		</tr>';
 		
 		$JobTotal = 0;

@@ -11,9 +11,11 @@
 // TO-DO LIST
 // ----------
 // . Generate grand-total of ALL invoices
-// . CSS styling (rounded div, alt colours)
 // . Change selected customer to GREEN (jQuery)
 // . Jump to top (ClientDetail) when new customer is selected
+// . Add prompt to select client when blank page
+
+// . ----------------------------------------------------------
 
 // . Submit one job to MYOB - return invoice number
 // . Submit multiple jobs to MYOB - return invoice number
@@ -64,8 +66,12 @@ function GetJobDetails(cardid) {
 		}
 	});
 	
-	$(this).css("background-color", "green");
+	$('tr').click(function() {
+		$("tr").removeClass("HighlightJob");
+		$(this).addClass("HighlightJob");
+	});
 
+	
 };
 
 </script>
@@ -73,7 +79,7 @@ function GetJobDetails(cardid) {
 <div class="ClientSummary">
 <table class="ClientTable" cellspacing="0" >
 <tr>
-<td><b>Customer</b></td>
+<td style="width:350px"><b>Customer</b></td>
 <td style="width:30px"></td>	<!-- Jobs Unbilled -->
 <td><b>Value</b></td>
 </tr>
@@ -81,6 +87,7 @@ function GetJobDetails(cardid) {
 <?
 
 foreach($CardID as $value) {
+	
 	echo '
 	<tr>
 	<td><a href="" onclick="GetJobDetails('.$CardID[$CounterDisplay].'); return false;">'. $CustomerLastName[$CounterDisplay] .' '. $CustomerFirstName[$CounterDisplay] .'</a></td>
