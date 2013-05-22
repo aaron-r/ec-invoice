@@ -1,9 +1,20 @@
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="css/style.css">
+<script src="plugins/jquery-1.9.1.js"></script>
+<script src="plugins/jquery.editable.min.js"></script>
 </head>
 
 <body>
+
+<script>
+
+$(document).ready(function() {
+	//alert('foobar');
+	$('#ClientDetail').animate({ scrollTop: 0 }, 'medium');
+});
+
+</script>
 
 <?
 
@@ -38,7 +49,6 @@ $FirstQuery = $Database->query("SELECT customers.cardid, customers.lastname, cus
 								AND jobdetails.datetimesheet IS NOT NULL AND jobdetails.invoicenumber IS NULL
 								AND customers.cardid=$DisplayCardID");
 							
-							
 foreach($FirstQuery as $row) {
 	$CardID[$CounterStart]		= $row['cardid'];
 	$JobNumber[$CounterStart] 	= $row['jobnumber'];
@@ -53,7 +63,19 @@ foreach($FirstQuery as $row) {
 }
 ?>
 
-<table class="JobTable" cellspacing="0" border="0">
+<table id="JobTable" cellspacing="0" border="0">
+
+<script>
+
+$('img#EditJob').click(function() {
+	$(this).closest('tr').addClass("EditJob");
+	$('#JobNotes').closest('td').editable({
+		lineBreaks: false,
+	});
+	
+});
+
+</script>
 
 <?
 
@@ -65,24 +87,25 @@ foreach($JobNumber as $value) {
 		$JobTotal = number_format(($JobTotal + $LineTotal), 2);
 		
 		echo '<tr bgcolor=E0E0FF>';
-		echo '<td class="JobTitle2" colspan=6> <input type=checkbox checked value='.$value.'> <b>&nbsp;Job #'.$JobNumber[$CounterDisplay] .' - '. $JobTitle[$CounterDisplay]. '</b> </td>';
+		echo '<td colspan=5> <input type=checkbox checked value='.$value.'> <b>&nbsp;Job #'.$JobNumber[$CounterDisplay] .' - '. $JobTitle[$CounterDisplay]. '</b> </td>';
+		echo '<td> <img id="EditJob" src="img/EditIcon.png" alt="Edit job contents" style="float:right; padding-right: 5px" > </td>';
 		echo '</tr>';
 		
 		// TO-DO: Make sure 'Unit Price' and 'Line Total' stay same width on large lines (See: Alliance Contracting)
-		echo '<tr class="JobBorder">
-			  <td class="JobTech">&nbsp;</td>
-			  <td class="JobQty">Qty</td>
-			  <td class="JobCode">Code</td>
+		echo '<tr id="JobBorder">
+			  <td id="JobTech">&nbsp;</td>
+			  <td id="JobQty">Qty</td>
+			  <td id="JobCode">Code</td>
 			  <td>Notes</td>
 			  <td>Unit Price</td>
 			  <td>Line Total</td>
 			  </tr>';
 		
-		echo '<tr class="JobBorder">';
-		echo '<td class="JobTech" bgcolor='.$TechColour[$CounterDisplay].'>'. $Tech[$CounterDisplay] .'</td>';
-		echo '<td class="JobQty"> '. $JobQty[$CounterDisplay] .'</td>';
-		echo '<td class="JobCode">'. $JobCode[$CounterDisplay] .'</td>';
-		echo '<td class="JobNotes">'. nl2br($JobNotes[$CounterDisplay]) .'</td>';
+		echo '<tr id="JobBorder">';
+		echo '<td id="JobTech" bgcolor='.$TechColour[$CounterDisplay].'>'. $Tech[$CounterDisplay] .'</td>';
+		echo '<td id="JobQty"> '. $JobQty[$CounterDisplay] .'</td>';
+		echo '<td id="JobCode">'. $JobCode[$CounterDisplay] .'</td>';
+		echo '<td id="JobNotes" class="Edit">'. nl2br($JobNotes[$CounterDisplay]) .'</td>';
 		echo '<td> <b>$</b>'. number_format($JobPrice[$CounterDisplay], 2) .'</td>';
 		echo '<td> <b>$</b>'. $LineTotal .'</td>';
 		echo '</tr>';
@@ -95,11 +118,11 @@ foreach($JobNumber as $value) {
 		$LineTotal = number_format(($JobQty[$CounterDisplay] * $JobPrice[$CounterDisplay]), 2);
 		$JobTotal = number_format(($JobTotal + $LineTotal), 2);
 	
-		echo '<tr class="JobBorder">';
-		echo '<td class="JobTech" bgcolor='.$TechColour[$CounterDisplay].'>'. $Tech[$CounterDisplay] .'</td>';
-		echo '<td class="JobQty">'. $JobQty[$CounterDisplay] .'</td>';
-		echo '<td class="JobCode">'. $JobCode[$CounterDisplay] .'</td>';
-		echo '<td class="JobNotes">'. nl2br($JobNotes[$CounterDisplay]) .'</td>';
+		echo '<tr id="JobBorder">';
+		echo '<td id="JobTech" bgcolor='.$TechColour[$CounterDisplay].'>'. $Tech[$CounterDisplay] .'</td>';
+		echo '<td id="JobQty">'. $JobQty[$CounterDisplay] .'</td>';
+		echo '<td id="JobCode">'. $JobCode[$CounterDisplay] .'</td>';
+		echo '<td id="JobNotes">'. nl2br($JobNotes[$CounterDisplay]) .'</td>';
 		echo '<td> <b>$</b>'. number_format($JobPrice[$CounterDisplay], 2) .'</td>';
 		echo '<td> <b>$</b>'. $LineTotal .'</td>';
 		echo '</tr>';
@@ -112,12 +135,14 @@ foreach($JobNumber as $value) {
 		echo '<tr>
 			  <td colspan=4>&nbsp;</td>
 			  <td bgcolor="#FFEBCD">Total: </td>';
-		echo '<td class='.$value.'_Total bgcolor="#FFEBCD"> <b>$</b>'. $JobTotal .'</td>';
+		echo '<td id='.$value.'_Total bgcolor="#FFEBCD"> <b>$</b>'. $JobTotal .'</td>';
 		echo '</tr>';
 		
 		echo '<tr>
 		<td colspan=2">&nbsp;</td>
 		</tr>';
+		
+		
 		
 		$JobTotal = 0;
 	}

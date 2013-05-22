@@ -8,12 +8,13 @@
 
 <?
 
+//error_reporting(0);
+
 // TO-DO LIST
 // ----------
 // . Generate grand-total of ALL invoices
-// . Change selected customer to GREEN (jQuery)
-// . Jump to top (ClientDetail) when new customer is selected
 // . Add prompt to select client when blank page
+// . Fix green selection (ensure only goes green when LINK is clicked)
 
 // . ----------------------------------------------------------
 
@@ -63,11 +64,12 @@ function GetJobDetails(cardid) {
 		data: {input : cardid},
 		success: function(data) {
 			$('#DisplayJobDetails').html(data);
+			
 		}
 	});
 	
-	$('tr').click(function() {
-		$("tr").removeClass("HighlightJob");
+	$('tr#JobList').click(function() {
+		$('tr').removeClass("HighlightJob");
 		$(this).addClass("HighlightJob");
 	});
 
@@ -89,7 +91,7 @@ function GetJobDetails(cardid) {
 foreach($CardID as $value) {
 	
 	echo '
-	<tr>
+	<tr id="JobList">
 	<td><a href="" onclick="GetJobDetails('.$CardID[$CounterDisplay].'); return false;">'. $CustomerLastName[$CounterDisplay] .' '. $CustomerFirstName[$CounterDisplay] .'</a></td>
 	<td><b>'. $UnbilledJobs[$CounterDisplay] .'</b></td>
 	<td> $'. $JobTotalValue[$CounterDisplay] .'</td>
@@ -102,7 +104,7 @@ foreach($CardID as $value) {
 </table>
 </div>
 
-<div class="ClientDetail">
+<div id="ClientDetail">
 
 <span id="DisplayJobDetails"></span>
 

@@ -11,6 +11,14 @@ div.ClientSummary {
 	font-size: 16px;
 }
 
+.HighlightJob {
+	background-color: #7BCC78	!important;
+}
+
+.EditJob {
+	background-color: #F56464	!important;
+}
+
 .ClientTable tr:nth-child(even) {
     background-color: #FEF0C9;
 }
@@ -20,7 +28,7 @@ div.ClientSummary {
     background-color: #CDC0B0;
 }
 
-div.ClientDetail {
+div#ClientDetail {
 	width: 71%;
 	height: 80%;
 	float: left;
@@ -29,13 +37,13 @@ div.ClientDetail {
 	margin-left: 10px;
 }
 
-table.JobTable tr td {
+#JobTable tr td {
 	font-size: 14px;
 	vertical-align: text-top;
 }
 
 
-tr.JobBorder td {
+tr#JobBorder td {
 	border: 1px;
 	border-style: solid;
 	border-color: #C0C0C0;
@@ -43,27 +51,22 @@ tr.JobBorder td {
 	border-top: 0px;
 }
 
-td.JobTitle2 {
-	border-radius: 15px;
-	font-size: 48px;
-}
-
-td.JobTech {
+td#JobTech {
 	width: 60px;
 	text-align: center;
 	border-left: 5px;
 	
 }
 
-td.JobCode {
+td#JobCode {
 	width: 75px;
 }
 
-td.JobNotes {
+td#JobNotes {
 	width: 800px;
 }
 
-td.JobQty {
+td#JobQty {
 	width: 60px;
 }
 
@@ -74,8 +77,4 @@ a {
 
 a:hover {
 	font-weight: bold;
-}
-
-.HighlightJob {
-	background-color: #7BCC78;
 }
