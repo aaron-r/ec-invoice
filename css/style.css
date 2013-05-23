@@ -37,7 +37,7 @@ div#ClientDetail {
 	margin-left: 10px;
 }
 
-#JobTable tr td {
+[id^="JobTable"] tr td {
 	font-size: 14px;
 	vertical-align: text-top;
 }
@@ -58,21 +58,30 @@ td#JobTech {
 	
 }
 
-td#JobCode {
+td[id^="JobCode"] {
 	width: 75px;
 }
 
-td#JobNotes {
+td[id^="JobNotes"] {
 	width: 800px;
 }
 
-td#JobQty {
+td[id^="JobQty"] {
 	width: 60px;
 }
 
 a {
 	color:#000000;
 	text-decoration: none;
+}
+
+
+td[id^="JobUnitPrice"] {
+	width: 60px;
+}
+
+td[id^="JobLinePrice"] {
+	width: 60px;
 }
 
 a:hover {

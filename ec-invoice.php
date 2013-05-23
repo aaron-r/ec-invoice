@@ -12,9 +12,12 @@
 
 // TO-DO LIST
 // ----------
-// . Generate grand-total of ALL invoices
-// . Add prompt to select client when blank page
+// . Add prompt to select client when blank page (first opened)
 // . Fix green selection (ensure only goes green when LINK is clicked)
+// . Keep [Customer / Value] header always on top (seperate to list)
+
+// . Footer layout: [ Grand total of X invoices selected for Y (customer). ] [Print] [E-mail] [Submit] - auto update grant total when checkboxes are ticked etc
+// . This can be changed to [ Successfully invoiced Y customer - here is invoice number] - sort of like a status bar. centered?? ya. fade in/fade out effect
 
 // . ----------------------------------------------------------
 
@@ -56,6 +59,7 @@ foreach($FirstQuery as $row) {
 
 <script>
 
+// Display selected customer
 function GetJobDetails(cardid) {
 	
 	$.ajax({
