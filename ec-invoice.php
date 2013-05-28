@@ -68,7 +68,6 @@ function GetJobDetails(cardid) {
 		data: {input : cardid},
 		success: function(data) {
 			$('#DisplayJobDetails').html(data);
-			
 		}
 	});
 	
@@ -84,11 +83,6 @@ function GetJobDetails(cardid) {
 
 <div class="ClientSummary">
 <table class="ClientTable" cellspacing="0" >
-<tr>
-<td style="width:350px"><b>Customer</b></td>
-<td style="width:30px"></td>	<!-- Jobs Unbilled -->
-<td><b>Value</b></td>
-</tr>
 
 <?
 

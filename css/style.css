@@ -3,7 +3,7 @@
 }
 
 div.ClientSummary {
-	height: 80%;
+	height: 90%;
 	width: 28%;
 	overflow-x: hidden;
 	overflow-y: scroll;
@@ -19,18 +19,13 @@ div.ClientSummary {
 	background-color: #F56464	!important;
 }
 
-.ClientTable tr:nth-child(even) {
+.ClientTable tr:nth-child(odd) {
     background-color: #FEF0C9;
-}
-
-
-.ClientTable tr:first-child {
-    background-color: #CDC0B0;
 }
 
 div#ClientDetail {
 	width: 71%;
-	height: 80%;
+	height: 90%;
 	float: left;
 	overflow-x: hidden;
 	overflow-y: scroll;

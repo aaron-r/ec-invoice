@@ -2,7 +2,8 @@
 <head>
 <link rel="stylesheet" type="text/css" href="css/style.css">
 <script src="plugins/jquery-1.9.1.js"></script>
-<script src="plugins/jquery.editable.min.js"></script>
+<script src="plugins/jquery.jeditable.js"></script>
+<script src="plugins/jquery.dataTables.js"></script>
 </head>
 
 <body>
@@ -20,7 +21,7 @@ error_reporting(0);
 
 // . Finalise CSS design (rounded borders?)
 
-// JTable or SlickGrid - look in to!
+// . Re-create in DataTables OR SlickGrid
 
 $DisplayCardID = $_POST['input'];
 
@@ -64,10 +65,15 @@ foreach($FirstQuery as $row) {
 // Auto-scroll to top of page
 $(document).ready(function() {
 	$('#ClientDetail').animate({ scrollTop: 0 }, 'medium');
+	
+	$('#JobTable').dataTable().makeEditable( {
+		sUpdateURL: "EditData.php"
+	} );
+	
 });
 
 // Edit specific job
-$('img#EditJob').click(function() {
+/* $('img#EditJob').click(function() {
 	
 	var EditJobNumber = $(this).attr('class');
 
@@ -77,7 +83,7 @@ $('img#EditJob').click(function() {
 		lineBreaks: false,
 	});
 	
-});
+}); */
 
 </script>
 
@@ -85,7 +91,8 @@ $('img#EditJob').click(function() {
 
 foreach($JobNumber as $value) {
 
-echo '<table id="JobTable_'. $value .'" cellspacing="0" border="0">';
+echo '<table id="JobTable" cellspacing="0" border="0">';
+echo '<thead>';
 
 	if ($value != $JobNumber[$CounterDisplay - 1]) {
 	
@@ -107,12 +114,12 @@ echo '<table id="JobTable_'. $value .'" cellspacing="0" border="0">';
 			  </tr>';
 		
 		echo '<tr id="JobBorder">';
-		echo '<td id="JobTech" bgcolor='.$TechColour[$CounterDisplay].'>'. $Tech[$CounterDisplay] .'</td>';
-		echo '<td id="JobQty_'. $value .'" class="Edit"> '. $JobQty[$CounterDisplay] .'</td>';
-		echo '<td id="JobCode_'. $value .'" class="Edit">'. $JobCode[$CounterDisplay] .'</td>';
-		echo '<td id="JobNotes_'. $value .'" class="Edit">'. nl2br($JobNotes[$CounterDisplay]) .'</td>';
-		echo '<td id="JobUnitPrice'. $value .'" class="Edit"> $'. number_format($JobPrice[$CounterDisplay], 2) .'</td>';
-		echo '<td id="JobLinePrice_'. $value .'" class="Edit"> $'. $LineTotal .'</td>';
+		echo '<td bgcolor='.$TechColour[$CounterDisplay].'>'. $Tech[$CounterDisplay] .'</td>';
+		echo '<td id="JobQty_'. $value .'"> '. $JobQty[$CounterDisplay] .'</td>';
+		echo '<td id="JobCode_'. $value .'">'. $JobCode[$CounterDisplay] .'</td>';
+		echo '<td id="JobNotes">'. nl2br($JobNotes[$CounterDisplay]) .'</td>';
+		echo '<td id="JobUnitPrice_'. $value .'"> $'. number_format($JobPrice[$CounterDisplay], 2) .'</td>';
+		echo '<td id="JobLinePrice_'. $value .'"> $'. $LineTotal .'</td>';
 		echo '</tr>';
 		
 		$CounterDisplay++;
@@ -125,11 +132,11 @@ echo '<table id="JobTable_'. $value .'" cellspacing="0" border="0">';
 	
 		echo '<tr id="JobBorder">';
 		echo '<td id="JobTech" bgcolor='.$TechColour[$CounterDisplay].'>'. $Tech[$CounterDisplay] .'</td>';
-		echo '<td id="JobQty_'. $value .'" class="Edit">'. $JobQty[$CounterDisplay] .'</td>';
-		echo '<td id="JobCode_'. $value .'" class="Edit">'. $JobCode[$CounterDisplay] .'</td>';
-		echo '<td id="JobNotes_'. $value .'" class="Edit">'. nl2br($JobNotes[$CounterDisplay]) .'</td>';
-		echo '<td id="JobUnitPrice'. $value .'" class="Edit"> $'. number_format($JobPrice[$CounterDisplay], 2) .'</td>';
-		echo '<td id="JobLinePrice_'. $value .'" class="Edit"> $'. $LineTotal .'</td>';
+		echo '<td id="JobQty_'. $value .'">'. $JobQty[$CounterDisplay] .'</td>';
+		echo '<td id="JobCode_'. $value .'">'. $JobCode[$CounterDisplay] .'</td>';
+		echo '<td id="JobNotes_'. $value .'">'. nl2br($JobNotes[$CounterDisplay]) .'</td>';
+		echo '<td id="JobUnitPrice'. $value .'"> $'. number_format($JobPrice[$CounterDisplay], 2) .'</td>';
+		echo '<td id="JobLinePrice_'. $value .'"> $'. $LineTotal .'</td>';
 		echo '</tr>';
 		
 		$CounterDisplay++;
@@ -150,6 +157,7 @@ echo '<table id="JobTable_'. $value .'" cellspacing="0" border="0">';
 		$JobTotal = 0;
 	}
 	
+echo '</thead>';
 echo '</table>';
 
 }
