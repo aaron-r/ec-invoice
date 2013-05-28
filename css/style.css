@@ -2,7 +2,9 @@
 	font-family:"Calibri";
 }
 
-div.ClientSummary {
+/* ec-invoice.php */
+
+.ClientSummary {
 	height: 90%;
 	width: 28%;
 	overflow-x: hidden;
@@ -12,18 +14,33 @@ div.ClientSummary {
 }
 
 .HighlightJob {
-	background-color: #7BCC78	!important;
+	background-color: rgb(123,204,120)	!important;
 }
 
 .EditJob {
-	background-color: #F56464	!important;
+	background-color: rgb(245,100,100)	!important;
+}
+
+.ClientTable {
+	border-collapse:collapse;
 }
 
 .ClientTable tr:nth-child(odd) {
-    background-color: #FEF0C9;
+    background-color: rgb(254,240,201);
 }
 
-div#ClientDetail {
+a {
+	color:rgb(0,0,0);
+	text-decoration: none;
+}
+
+a:hover {
+	font-weight: bold;
+}
+
+/* query.php */
+
+#ClientDetail {
 	width: 71%;
 	height: 90%;
 	float: left;
@@ -32,25 +49,38 @@ div#ClientDetail {
 	margin-left: 10px;
 }
 
-[id^="JobTable"] tr td {
-	font-size: 14px;
-	vertical-align: text-top;
+#EditJob {
+	float:right; 
+	padding-right: 5px
 }
 
+[id^="JobTable"] {
+	border: 0px;
+	border-collapse: collapse;
+}
+
+.JobDisplayHeader {
+	background-color: rgb(224,224,255);
+}
 
 tr#JobBorder td {
 	border: 1px;
 	border-style: solid;
-	border-color: #C0C0C0;
+	border-color: rgb(192,192,192);
 	border-left: 0px;
 	border-top: 0px;
 }
 
-td#JobTech {
+td.JobTech {
 	width: 60px;
 	text-align: center;
 	border-left: 5px;
 	
+}
+
+[id^="JobTable"] tr td {
+	font-size: 14px;
+	vertical-align: text-top;
 }
 
 td[id^="JobCode"] {
@@ -65,12 +95,6 @@ td[id^="JobQty"] {
 	width: 60px;
 }
 
-a {
-	color:#000000;
-	text-decoration: none;
-}
-
-
 td[id^="JobUnitPrice"] {
 	width: 60px;
 }
@@ -79,6 +103,10 @@ td[id^="JobLinePrice"] {
 	width: 60px;
 }
 
-a:hover {
-	font-weight: bold;
+#DisplayJobTotal {
+	background-color: rgb(255,235,205);
+	position: relative;
+	width: 128px;
+	left: 1005px;
+	margin-bottom: 20px;
 }

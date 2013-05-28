@@ -1,7 +1,7 @@
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="css/style.css">
-<script src="plugins/jquery-1.9.1.js"></script>
+<script src="plugins/jquery.min.js"></script>
 </head>
 
 <body>
@@ -82,7 +82,7 @@ function GetJobDetails(cardid) {
 </script>
 
 <div class="ClientSummary">
-<table class="ClientTable" cellspacing="0" >
+<table class="ClientTable">
 
 <?
 

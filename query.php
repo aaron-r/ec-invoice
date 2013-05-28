@@ -1,16 +1,15 @@
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="css/style.css">
-<script src="plugins/jquery-1.9.1.js"></script>
-<script src="plugins/jquery.jeditable.js"></script>
-<script src="plugins/jquery.dataTables.js"></script>
+<script src="plugins/jquery.min.js"></script>
+<script src="plugins/jquery.editable.min.js"></script>
 </head>
 
 <body>
 
 <?
 
-error_reporting(0);
+//error_reporting(0);
 
 // TO-DO LIST
 // ----------
@@ -21,7 +20,7 @@ error_reporting(0);
 
 // . Finalise CSS design (rounded borders?)
 
-// . Re-create in DataTables OR SlickGrid
+// . Fuck DataTables, lets do this with pure JQuery!
 
 $DisplayCardID = $_POST['input'];
 
@@ -58,17 +57,18 @@ foreach($FirstQuery as $row) {
 }
 ?>
 
-
-
 <script>
 
 // Auto-scroll to top of page
 $(document).ready(function() {
 	$('#ClientDetail').animate({ scrollTop: 0 }, 'medium');
 	
-	$('#JobTable').dataTable().makeEditable( {
-		sUpdateURL: "EditData.php"
-	} );
+});
+
+$('img#EditJob').click(function() {
+	var EditJobNumber = $(this).attr('class');
+	
+	$("#JobTable_" + EditJobNumber).last().append('<tr id="JobBorder"><td class="JobTech"></td><td id="JobQty"></td><td id="JobCode"></td><td id="JobNotes">New line goes here!!!</td><td id="JobUnitPrice"></td><td id="JobLinePrice"></td></tr>');
 	
 });
 
@@ -91,17 +91,17 @@ $(document).ready(function() {
 
 foreach($JobNumber as $value) {
 
-echo '<table id="JobTable" cellspacing="0" border="0">';
-echo '<thead>';
 
 	if ($value != $JobNumber[$CounterDisplay - 1]) {
 	
 		$LineTotal = number_format(($JobQty[$CounterDisplay] * $JobPrice[$CounterDisplay]), 2);
 		$JobTotal = number_format(($JobTotal + $LineTotal), 2);
 		
-		echo '<tr bgcolor=E0E0FF>';
+		echo '<table id="JobTable_'. $value .'">';
+		
+		echo '<tr class="JobDisplayHeader">';
 		echo '<td colspan=5> <input type=checkbox checked value='.$value.'> <b>&nbsp;Job #'.$JobNumber[$CounterDisplay] .' - '. $JobTitle[$CounterDisplay]. '</b> </td>';
-		echo '<td> <img id="EditJob" src="img/EditIcon.png" class='.$value.' style="float:right; padding-right: 5px" > </td>';
+		echo '<td> <img id="EditJob" src="img/EditIcon.png" class='.$value.'> </td>';
 		echo '</tr>';
 		
 		echo '<tr id="JobBorder">
@@ -112,9 +112,9 @@ echo '<thead>';
 			  <td>Unit Price</td>
 			  <td>Line Total</td>
 			  </tr>';
-		
+
 		echo '<tr id="JobBorder">';
-		echo '<td bgcolor='.$TechColour[$CounterDisplay].'>'. $Tech[$CounterDisplay] .'</td>';
+		echo '<td class="JobTech" bgcolor='.$TechColour[$CounterDisplay].'>'. $Tech[$CounterDisplay] .'</td>';
 		echo '<td id="JobQty_'. $value .'"> '. $JobQty[$CounterDisplay] .'</td>';
 		echo '<td id="JobCode_'. $value .'">'. $JobCode[$CounterDisplay] .'</td>';
 		echo '<td id="JobNotes">'. nl2br($JobNotes[$CounterDisplay]) .'</td>';
@@ -125,13 +125,15 @@ echo '<thead>';
 		$CounterDisplay++;
 
 	} 
+	
 	else {
 		
 		$LineTotal = number_format(($JobQty[$CounterDisplay] * $JobPrice[$CounterDisplay]), 2);
 		$JobTotal = number_format(($JobTotal + $LineTotal), 2);
 	
+		//echo '<tbody>';
 		echo '<tr id="JobBorder">';
-		echo '<td id="JobTech" bgcolor='.$TechColour[$CounterDisplay].'>'. $Tech[$CounterDisplay] .'</td>';
+		echo '<td class="JobTech" bgcolor='.$TechColour[$CounterDisplay].'>'. $Tech[$CounterDisplay] .'</td>';
 		echo '<td id="JobQty_'. $value .'">'. $JobQty[$CounterDisplay] .'</td>';
 		echo '<td id="JobCode_'. $value .'">'. $JobCode[$CounterDisplay] .'</td>';
 		echo '<td id="JobNotes_'. $value .'">'. nl2br($JobNotes[$CounterDisplay]) .'</td>';
@@ -144,21 +146,17 @@ echo '<thead>';
 	
 	if ($value != $JobNumber[$CounterDisplay]) {
 		
-		echo '<tr>
-			  <td colspan=4>&nbsp;</td>
-			  <td bgcolor="#FFEBCD">Total: </td>';
-		echo '<td id='.$value.'_Total bgcolor="#FFEBCD"> <b>$'. $JobTotal .' </b></td>';
-		echo '</tr>';
+		//echo '</tbody>';
+		echo '</table>';
+
+		// Make TOTAL in to div (not part of previous table!)
 		
-		echo '<tr>
-		<td colspan=2">&nbsp;</td>
-		</tr>';
+		echo '<div id="DisplayJobTotal">Total: <b>$'. $JobTotal .' </b> </div>';
 		
 		$JobTotal = 0;
 	}
-	
-echo '</thead>';
-echo '</table>';
+
+
 
 }
 
