@@ -6,7 +6,7 @@
 
 .ClientSummary {
 	height: 90%;
-	width: 28%;
+	width: 26%;
 	overflow-x: hidden;
 	overflow-y: scroll;
 	float: left;
@@ -14,7 +14,7 @@
 }
 
 .HighlightJob {
-	background-color: rgb(123,204,120)	!important; /* replace with jquery-ui animate??? */
+	background-color: rgb(123,204,120)	!important;
 }
 
 .ClientTable {
@@ -30,8 +30,23 @@ a {
 	text-decoration: none;
 }
 
-a:hover {
-	font-weight: bold;
+tr#JobList:hover {
+	background-color: rgb(207,207,236);
+	cursor: hand;
+	cursor: pointer;
+}
+
+.UnbilledJobs {
+	padding-left: 25px;
+	padding-right: 25px;
+}
+
+.JobTotalValue { 
+	padding-right: 20px;
+}
+
+.CustomerName {
+	padding-left: 10px;
 }
 
 /* query.php */
@@ -48,11 +63,8 @@ a:hover {
 #EditJobHeader {
 	float:right; 
 	padding-right: 5px
-}
-
-[id^="JobTable"] {
-	border: 0px;
-	border-collapse: collapse;
+	cursor: hand;
+	cursor: pointer;
 }
 
 #JobHeader {
@@ -62,16 +74,13 @@ a:hover {
 tr#JobBorder td {
 	border: 1px;
 	border-style: solid;
+	border-top: none;
 	border-color: rgb(192,192,192);
-	border-left: 0px;
-	border-top: 0px;
 }
 
 td.JobTech {
 	width: 60px;
 	text-align: center;
-	border-left: 5px;
-	
 }
 
 [id^="JobTable"] tr td {
@@ -99,11 +108,16 @@ td[id^="JobLinePrice"] {
 	width: 60px;
 }
 
+[id^="JobTable"] {
+	border: 1px;
+	border-collapse: collapse;
+}
+
 #DisplayJobTotal {
 	background-color: rgb(255,235,205);
 	position: relative;
 	width: 123px;
-	left: 86.3%;
+	left: 1005px;
 	margin-bottom: 20px;
 	text-align: right;
 	padding-right: 5px;
@@ -113,4 +127,9 @@ td[id^="JobLinePrice"] {
 	border-style: none		!important;
 	padding-left: 5px;
 	margin-top: 5px;
+}
+
+.AddRow, .DeleteRow {
+	cursor: hand;
+	cursor: pointer;
 }

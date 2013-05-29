@@ -2,7 +2,7 @@
 <head>
 <link rel="stylesheet" type="text/css" href="css/style.css">
 <script src="plugins/jquery.min.js"></script>
-<script src="plugins/jquery-ui.js"></script>
+<script src="plugins/jquery-ui.min.js"></script>
 <script src="plugins/jquery.editable.min.js"></script>
 </head>
 
@@ -14,13 +14,16 @@ error_reporting(0);
 
 // TO-DO LIST
 // ----------
-// . Output Grand Total for customer
-// . Finalise CSS design (rounded borders on top of tables)
+// . Output Grand Total for customer							
+// . Finalise CSS design (rounded borders on top of tables)	
+// . Display date along-side each job number (really needed?)
+// . Enforce max-width for <td> elements
 
-// . Delete specific line from table - prompt
-// . Add specific line to table
+// . Editing jobs 						- ensure HTML is not displayed to user!		
+// . Delete specific line from table 	- prompt before delete!						
+// . Add specific line to table			- ensure new lines are EDITABLE!		
 
-// . Auto-update totals for Qty, Unit Price, Line Total etc...
+// . Auto-update totals for: (ea. 'Line Total' = Qty * Unit Price) and (Invoice Total = sum of all 'Line Total')
 
 $DisplayCardID = $_POST['input'];
 
@@ -59,21 +62,21 @@ foreach($FirstQuery as $row) {
 
 <script>
 
-
 $(document).ready(function() {
 	$('#ClientDetail').animate({ scrollTop: 0 }, 'medium');		// Auto-scroll to top of page
-	$("td[class^='EditRow']").fadeOut(1000);
+	$('[class^="EditRow"]').fadeOut(1000);
 });
 
 // Edit specific job table
 $('img#EditJobHeader').click(function() {
-	
+
 	var EditJobNumber = $(this).attr('class');
 	var IsJobEditable = $(this).closest('#JobHeader').attr('class');
 
 	$(this).closest('tr').toggleClass("IsEditable");
 	$(this).closest('tr').animate({"backgroundColor":"rgb(245,100,100)"}, 600);
-	$('.EditRow_' + EditJobNumber).fadeIn(1000);
+	
+	$(".EditRow_" + EditJobNumber).fadeIn(1000);
 	
 	$('#JobTable_' + EditJobNumber + ' td.EditJob').editable({
 		lineBreaks: false,
@@ -82,18 +85,23 @@ $('img#EditJobHeader').click(function() {
 	if (IsJobEditable == "IsEditable") {
 		$('#JobTable_' + EditJobNumber + ' td.EditJob').editable('destroy');
 		$(this).closest('tr').animate({"backgroundColor":"rgb(224,224,255)"}, 400);
-		$('.EditRow_' + EditJobNumber).fadeOut(1000);
+		
+	$(".EditRow_" + EditJobNumber).fadeOut(1000);
+	
 	} 
 
 });
 
-// Add new line - ***example***
-/* $('img#EditJob').click(function() {
-	var EditJobNumber = $(this).attr('class');
-	
-	$("#JobTable_" + EditJobNumber).last().append('<tr id="JobBorder"><td class="JobTech"></td><td id="JobQty"></td><td id="JobCode"></td><td id="JobNotes">New line goes here!!!</td><td id="JobUnitPrice"></td><td id="JobLinePrice"></td></tr>');
-	
-}); */
+function AddRow(EditJobNumber) {
+
+	var AddRowString = '<tr id="JobBorder"> <td class="JobTech"> </td> <td id="JobQty"> </td> <td id="JobCode"> </td> <td id="JobNotes">&nbsp;</td> <td id="JobUnitPrice"> </td> <td id="JobLinePrice"> </td> <td class="EditRow"> <img src="img/DeleteRow.png" class="DeleteRow"> </td>';
+	$("#JobTable_" + EditJobNumber).last().append(AddRowString);
+	$('.DeleteRow_' + EditJobNumber).fadeIn(1000);
+};
+
+function DeleteRow(EditJobNumber) {
+	$(this).closest('tr').animate({"backgroundColor":"rgb(224,224,255)"}, 400);
+};
 
 </script>
 
@@ -115,13 +123,13 @@ foreach($JobNumber as $value) {
 		echo '</tr>';
 		
 		echo '<tr id="JobBorder">
-			  <td id="JobTech">&nbsp;</td>
+			  <td id="JobTech" bgcolor='.$TechColour[$CounterDisplay].'>&nbsp;</td>
 			  <td id="JobQty">Qty</td>
 			  <td id="JobCode">Code</td>
 			  <td>Notes</td>
 			  <td>Unit Price</td>
 			  <td>Line Total</td>
-			  <td class="EditRow_'. $value .'"> <img src="img/AddRow.png"> </td>
+			  <td class="EditRow_'. $value .'"> <img src="img/AddRow.png" class="AddRow" onclick="AddRow('. $value .')"> </td>
 			  </tr>';
 
 		echo '<tr id="JobBorder">';
@@ -131,7 +139,7 @@ foreach($JobNumber as $value) {
 		echo '<td id="JobNotes" class="EditJob">'. nl2br($JobNotes[$CounterDisplay]) .'</td>';
 		echo '<td id="JobUnitPrice_'. $value .'" class="EditJob"> $'. number_format($JobPrice[$CounterDisplay], 2) .'</td>';
 		echo '<td id="JobLinePrice_'. $value .'" class="EditJob"> $'. $LineTotal .'</td>';
-		echo '<td class="EditRow_'. $value .'"> <img src="img/DeleteRow.png"> </td>';
+		echo '<td class="EditRow_'. $value .'"> <img src="img/DeleteRow.png" class="DeleteRow" onclick="DeleteRow('. $value .')"> </td>';
 		echo '</tr>';
 		
 		$CounterDisplay++;
@@ -151,7 +159,7 @@ foreach($JobNumber as $value) {
 		echo '<td id="JobNotes_'. $value .'" class="EditJob">'. nl2br($JobNotes[$CounterDisplay]) .'</td>';
 		echo '<td id="JobUnitPrice'. $value .'" class="EditJob"> $'. number_format($JobPrice[$CounterDisplay], 2) .'</td>';
 		echo '<td id="JobLinePrice_'. $value .'" class="EditJob"> $'. $LineTotal .'</td>';
-		echo '<td class="EditRow_'. $value .'"> <img src="img/DeleteRow.png"> </td>';
+		echo '<td class="EditRow_'. $value .'"> <img src="img/DeleteRow.png" class="DeleteRow" onclick="DeleteRow('. $value .')"> </td>';
 		echo '</tr>';
 		
 		$CounterDisplay++;

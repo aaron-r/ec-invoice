@@ -8,18 +8,16 @@
 
 <?
 
-//error_reporting(0);
+error_reporting(0);
 
 // TO-DO LIST
 // ----------
 // . Add prompt to select client when blank page (first opened)
-// . Fix green selection (ensure only goes green when LINK is clicked)
-// . Fix spacing on ClientSummary bar with Qty and Amount
 
 // . Footer layout: [ Grand total of X invoices selected for Y (customer). ] [Print] [E-mail] [Submit] - auto update grant total when checkboxes are ticked etc
 // . This can be changed to [ Successfully invoiced Y customer - here is invoice number] - sort of like a status bar. centered?? ya. fade in/fade out effect
 
-// . ----------------------------------------------------------
+// . -------------------------MYOB---------------------------
 
 // . Submit one job to MYOB - return invoice number
 // . Submit multiple jobs to MYOB - return invoice number
@@ -59,9 +57,21 @@ foreach($FirstQuery as $row) {
 
 <script>
 
-// Display selected customer
-function GetJobDetails(cardid) {
+// Highlight selected customer
+$(document).ready(function() {
+
+	$('tr#JobList').click(function() {
+		$('tr').removeClass("HighlightJob");
+		$(this).addClass("HighlightJob");
+	});
 	
+	$('#DisplayJobDetails').html('<img src="http://erroraccessdenied.com/files/images/iamnotgoodwithcomputer.jpeg" alt="Placeholder for instructions">');
+	
+});
+
+// Display selected customer's invoices
+function GetJobDetails(cardid) {
+
 	$.ajax({
 		url: "query.php",
 		type: "POST",
@@ -70,13 +80,7 @@ function GetJobDetails(cardid) {
 			$('#DisplayJobDetails').html(data);
 		}
 	});
-	
-	$('tr#JobList').click(function() {
-		$('tr').removeClass("HighlightJob");
-		$(this).addClass("HighlightJob");
-	});
 
-	
 };
 
 </script>
@@ -89,10 +93,10 @@ function GetJobDetails(cardid) {
 foreach($CardID as $value) {
 	
 	echo '
-	<tr id="JobList">
-	<td><a href="" onclick="GetJobDetails('.$CardID[$CounterDisplay].'); return false;">'. $CustomerLastName[$CounterDisplay] .' '. $CustomerFirstName[$CounterDisplay] .'</a></td>
-	<td><b>'. $UnbilledJobs[$CounterDisplay] .'</b></td>
-	<td> $'. $JobTotalValue[$CounterDisplay] .'</td>
+	<tr id="JobList" onclick="GetJobDetails('.$CardID[$CounterDisplay].');">
+	<td class="CustomerName">'. $CustomerLastName[$CounterDisplay] .' '. $CustomerFirstName[$CounterDisplay] .'</td>
+	<td class="UnbilledJobs"><b>'. $UnbilledJobs[$CounterDisplay] .'</b></td>
+	<td class="JobTotalValue"> $'. $JobTotalValue[$CounterDisplay] .'</td>
 	</tr>';
 	$CounterDisplay++;
 }
