@@ -2,6 +2,7 @@
 <head>
 <link rel="stylesheet" type="text/css" href="css/style.css">
 <script src="plugins/jquery.min.js"></script>
+<script src="plugins/jquery-ui.js"></script>
 <script src="plugins/jquery.editable.min.js"></script>
 </head>
 
@@ -9,18 +10,17 @@
 
 <?
 
-//error_reporting(0);
+error_reporting(0);
 
 // TO-DO LIST
 // ----------
 // . Output Grand Total for customer
-// . Create a toggle 'edit' button (change bg-colour to red and have editable text)
-// . Ability to 'add' or 'delete' a new row for a job
+// . Finalise CSS design (rounded borders on top of tables)
+
+// . Delete specific line from table - prompt
+// . Add specific line to table
+
 // . Auto-update totals for Qty, Unit Price, Line Total etc...
-
-// . Finalise CSS design (rounded borders?)
-
-// . Fuck DataTables, lets do this with pure JQuery!
 
 $DisplayCardID = $_POST['input'];
 
@@ -59,29 +59,39 @@ foreach($FirstQuery as $row) {
 
 <script>
 
-// Auto-scroll to top of page
+
 $(document).ready(function() {
-	$('#ClientDetail').animate({ scrollTop: 0 }, 'medium');
-	
+	$('#ClientDetail').animate({ scrollTop: 0 }, 'medium');		// Auto-scroll to top of page
+	$("td[class^='EditRow']").fadeOut(1000);
 });
 
-$('img#EditJob').click(function() {
+// Edit specific job table
+$('img#EditJobHeader').click(function() {
+	
+	var EditJobNumber = $(this).attr('class');
+	var IsJobEditable = $(this).closest('#JobHeader').attr('class');
+
+	$(this).closest('tr').toggleClass("IsEditable");
+	$(this).closest('tr').animate({"backgroundColor":"rgb(245,100,100)"}, 600);
+	$('.EditRow_' + EditJobNumber).fadeIn(1000);
+	
+	$('#JobTable_' + EditJobNumber + ' td.EditJob').editable({
+		lineBreaks: false,
+	});
+	
+	if (IsJobEditable == "IsEditable") {
+		$('#JobTable_' + EditJobNumber + ' td.EditJob').editable('destroy');
+		$(this).closest('tr').animate({"backgroundColor":"rgb(224,224,255)"}, 400);
+		$('.EditRow_' + EditJobNumber).fadeOut(1000);
+	} 
+
+});
+
+// Add new line - ***example***
+/* $('img#EditJob').click(function() {
 	var EditJobNumber = $(this).attr('class');
 	
 	$("#JobTable_" + EditJobNumber).last().append('<tr id="JobBorder"><td class="JobTech"></td><td id="JobQty"></td><td id="JobCode"></td><td id="JobNotes">New line goes here!!!</td><td id="JobUnitPrice"></td><td id="JobLinePrice"></td></tr>');
-	
-});
-
-// Edit specific job
-/* $('img#EditJob').click(function() {
-	
-	var EditJobNumber = $(this).attr('class');
-
-	$(this).closest('tr').addClass("EditJob");
-	
-	$("#JobNotes_" + EditJobNumber).editable({
-		lineBreaks: false,
-	});
 	
 }); */
 
@@ -99,9 +109,9 @@ foreach($JobNumber as $value) {
 		
 		echo '<table id="JobTable_'. $value .'">';
 		
-		echo '<tr class="JobDisplayHeader">';
+		echo '<tr id="JobHeader" class="">';
 		echo '<td colspan=5> <input type=checkbox checked value='.$value.'> <b>&nbsp;Job #'.$JobNumber[$CounterDisplay] .' - '. $JobTitle[$CounterDisplay]. '</b> </td>';
-		echo '<td> <img id="EditJob" src="img/EditIcon.png" class='.$value.'> </td>';
+		echo '<td> <img id="EditJobHeader" src="img/EditIcon.png" class='.$value.'> </td>';
 		echo '</tr>';
 		
 		echo '<tr id="JobBorder">
@@ -111,15 +121,17 @@ foreach($JobNumber as $value) {
 			  <td>Notes</td>
 			  <td>Unit Price</td>
 			  <td>Line Total</td>
+			  <td class="EditRow_'. $value .'"> <img src="img/AddRow.png"> </td>
 			  </tr>';
 
 		echo '<tr id="JobBorder">';
 		echo '<td class="JobTech" bgcolor='.$TechColour[$CounterDisplay].'>'. $Tech[$CounterDisplay] .'</td>';
-		echo '<td id="JobQty_'. $value .'"> '. $JobQty[$CounterDisplay] .'</td>';
-		echo '<td id="JobCode_'. $value .'">'. $JobCode[$CounterDisplay] .'</td>';
-		echo '<td id="JobNotes">'. nl2br($JobNotes[$CounterDisplay]) .'</td>';
-		echo '<td id="JobUnitPrice_'. $value .'"> $'. number_format($JobPrice[$CounterDisplay], 2) .'</td>';
-		echo '<td id="JobLinePrice_'. $value .'"> $'. $LineTotal .'</td>';
+		echo '<td id="JobQty_'. $value .'" class="EditJob"> '. $JobQty[$CounterDisplay] .'</td>';
+		echo '<td id="JobCode_'. $value .'" class="EditJob">'. $JobCode[$CounterDisplay] .'</td>';
+		echo '<td id="JobNotes" class="EditJob">'. nl2br($JobNotes[$CounterDisplay]) .'</td>';
+		echo '<td id="JobUnitPrice_'. $value .'" class="EditJob"> $'. number_format($JobPrice[$CounterDisplay], 2) .'</td>';
+		echo '<td id="JobLinePrice_'. $value .'" class="EditJob"> $'. $LineTotal .'</td>';
+		echo '<td class="EditRow_'. $value .'"> <img src="img/DeleteRow.png"> </td>';
 		echo '</tr>';
 		
 		$CounterDisplay++;
@@ -134,29 +146,24 @@ foreach($JobNumber as $value) {
 		//echo '<tbody>';
 		echo '<tr id="JobBorder">';
 		echo '<td class="JobTech" bgcolor='.$TechColour[$CounterDisplay].'>'. $Tech[$CounterDisplay] .'</td>';
-		echo '<td id="JobQty_'. $value .'">'. $JobQty[$CounterDisplay] .'</td>';
-		echo '<td id="JobCode_'. $value .'">'. $JobCode[$CounterDisplay] .'</td>';
-		echo '<td id="JobNotes_'. $value .'">'. nl2br($JobNotes[$CounterDisplay]) .'</td>';
-		echo '<td id="JobUnitPrice'. $value .'"> $'. number_format($JobPrice[$CounterDisplay], 2) .'</td>';
-		echo '<td id="JobLinePrice_'. $value .'"> $'. $LineTotal .'</td>';
+		echo '<td id="JobQty_'. $value .'" class="EditJob">'. $JobQty[$CounterDisplay] .'</td>';
+		echo '<td id="JobCode_'. $value .'" class="EditJob">'. $JobCode[$CounterDisplay] .'</td>';
+		echo '<td id="JobNotes_'. $value .'" class="EditJob">'. nl2br($JobNotes[$CounterDisplay]) .'</td>';
+		echo '<td id="JobUnitPrice'. $value .'" class="EditJob"> $'. number_format($JobPrice[$CounterDisplay], 2) .'</td>';
+		echo '<td id="JobLinePrice_'. $value .'" class="EditJob"> $'. $LineTotal .'</td>';
+		echo '<td class="EditRow_'. $value .'"> <img src="img/DeleteRow.png"> </td>';
 		echo '</tr>';
 		
 		$CounterDisplay++;
 	}
 	
 	if ($value != $JobNumber[$CounterDisplay]) {
-		
-		//echo '</tbody>';
+	
 		echo '</table>';
-
-		// Make TOTAL in to div (not part of previous table!)
-		
 		echo '<div id="DisplayJobTotal">Total: <b>$'. $JobTotal .' </b> </div>';
 		
 		$JobTotal = 0;
 	}
-
-
 
 }
 
