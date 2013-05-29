@@ -1,4 +1,4 @@
-<h2>Features<h2>
+<h2>Features</h2>
 
 * Programatically imports data in to MYOB! <br>
 * Single page application - no need to refresh page! <br>
