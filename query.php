@@ -19,7 +19,7 @@ error_reporting(0);
 // . Display date along-side each job number (really needed?)
 // . Enforce max-width for <td> elements
 
-// . Editing jobs 						- ensure HTML is not displayed to user!		
+// . Editing job table						- ensure HTML is not displayed to user!		
 // . Delete specific line from table 	- prompt before delete!						
 // . Add specific line to table			- ensure new lines are EDITABLE!		
 
@@ -64,7 +64,6 @@ foreach($FirstQuery as $row) {
 
 $(document).ready(function() {
 	$('#ClientDetail').animate({ scrollTop: 0 }, 'medium');		// Auto-scroll to top of page
-	$('[class^="EditRow"]').fadeOut(1000);
 });
 
 // Edit specific job table
@@ -76,8 +75,9 @@ $('img#EditJobHeader').click(function() {
 	$(this).closest('tr').toggleClass("IsEditable");
 	$(this).closest('tr').animate({"backgroundColor":"rgb(245,100,100)"}, 600);
 	
+	$(".EditRow_" + EditJobNumber).css('visibility', 'visible');
 	$(".EditRow_" + EditJobNumber).fadeIn(1000);
-	
+
 	$('#JobTable_' + EditJobNumber + ' td.EditJob').editable({
 		lineBreaks: false,
 	});
@@ -94,12 +94,14 @@ $('img#EditJobHeader').click(function() {
 
 function AddRow(EditJobNumber) {
 
-	var AddRowString = '<tr id="JobBorder"> <td class="JobTech"> </td> <td id="JobQty"> </td> <td id="JobCode"> </td> <td id="JobNotes">&nbsp;</td> <td id="JobUnitPrice"> </td> <td id="JobLinePrice"> </td> <td class="EditRow"> <img src="img/DeleteRow.png" class="DeleteRow"> </td>';
+	$(".EditRow_" + EditJobNumber).css('visibility', 'visible');
+
+	var AddRowString = '<tr id="JobBorder"> <td class="JobTech"> </td> <td id="JobQty"> </td> <td id="JobCode"> </td> <td id="JobNotes">&nbsp;</td> <td id="JobUnitPrice"> </td> <td id="JobLinePrice"> </td> <td class="EditRow_'+EditJobNumber+'"> <img src="img/DeleteRow.png" class="DeleteRow"> </td>';
 	$("#JobTable_" + EditJobNumber).last().append(AddRowString);
 	$('.DeleteRow_' + EditJobNumber).fadeIn(1000);
 };
 
-function DeleteRow(EditJobNumber) {
+function DeleteRow() {
 	$(this).closest('tr').animate({"backgroundColor":"rgb(224,224,255)"}, 400);
 };
 

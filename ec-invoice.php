@@ -16,6 +16,7 @@ error_reporting(0);
 
 // . Footer layout: [ Grand total of X invoices selected for Y (customer). ] [Print] [E-mail] [Submit] - auto update grant total when checkboxes are ticked etc
 // . This can be changed to [ Successfully invoiced Y customer - here is invoice number] - sort of like a status bar. centered?? ya. fade in/fade out effect
+// . Header menu instead for: Undo (?) / E-mail / Print / Submit
 
 // . -------------------------MYOB---------------------------
 

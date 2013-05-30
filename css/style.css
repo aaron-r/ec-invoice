@@ -127,6 +127,7 @@ td[id^="JobLinePrice"] {
 	border-style: none		!important;
 	padding-left: 5px;
 	margin-top: 5px;
+	visibility: hidden;
 }
 
 .AddRow, .DeleteRow {
