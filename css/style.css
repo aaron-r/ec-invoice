@@ -6,7 +6,7 @@
 
 .ClientSummary {
 	height: 90%;
-	width: 26%;
+	width: 28%;
 	overflow-x: hidden;
 	overflow-y: scroll;
 	float: left;
@@ -37,12 +37,12 @@ tr#JobList:hover {
 }
 
 .UnbilledJobs {
-	padding-left: 25px;
-	padding-right: 25px;
+	padding-left: 10px;
+	padding-right: 20px;
 }
 
 .JobTotalValue { 
-	padding-right: 20px;
+	padding-right: 10px;
 }
 
 .CustomerName {
@@ -62,7 +62,8 @@ tr#JobList:hover {
 
 #EditJobHeader {
 	float:right; 
-	padding-right: 5px
+	padding-right: 3px;
+	padding-top: 2px;
 	cursor: hand;
 	cursor: pointer;
 }
@@ -127,7 +128,7 @@ td[id^="JobLinePrice"] {
 	border-style: none		!important;
 	padding-left: 5px;
 	margin-top: 5px;
-	visibility: hidden;
+	/* visibility: hidden; */
 }
 
 .AddRow, .DeleteRow {

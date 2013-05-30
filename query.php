@@ -15,12 +15,10 @@ error_reporting(0);
 // TO-DO LIST
 // ----------
 // . Output Grand Total for customer							
-// . Finalise CSS design (rounded borders on top of tables)	
 // . Display date along-side each job number (really needed?)
 // . Enforce max-width for <td> elements
 
-// . Editing job table						- ensure HTML is not displayed to user!		
-// . Delete specific line from table 	- prompt before delete!						
+// . Editing job table					- ensure HTML is not displayed to user!					
 // . Add specific line to table			- ensure new lines are EDITABLE!		
 
 // . Auto-update totals for: (ea. 'Line Total' = Qty * Unit Price) and (Invoice Total = sum of all 'Line Total')
@@ -64,6 +62,8 @@ foreach($FirstQuery as $row) {
 
 $(document).ready(function() {
 	$('#ClientDetail').animate({ scrollTop: 0 }, 'medium');		// Auto-scroll to top of page
+	// CSS hide visible for EditRow here?
+	$('[class^="EditRow"]').fadeOut(1000); //tmp
 });
 
 // Edit specific job table
@@ -101,9 +101,10 @@ function AddRow(EditJobNumber) {
 	$('.DeleteRow_' + EditJobNumber).fadeIn(1000);
 };
 
-function DeleteRow() {
-	$(this).closest('tr').animate({"backgroundColor":"rgb(224,224,255)"}, 400);
-};
+// Prompt and delete specific row
+$('.DeleteRow').live('click', function() {
+	$(this).closest('tr').remove();
+});
 
 </script>
 
@@ -141,7 +142,7 @@ foreach($JobNumber as $value) {
 		echo '<td id="JobNotes" class="EditJob">'. nl2br($JobNotes[$CounterDisplay]) .'</td>';
 		echo '<td id="JobUnitPrice_'. $value .'" class="EditJob"> $'. number_format($JobPrice[$CounterDisplay], 2) .'</td>';
 		echo '<td id="JobLinePrice_'. $value .'" class="EditJob"> $'. $LineTotal .'</td>';
-		echo '<td class="EditRow_'. $value .'"> <img src="img/DeleteRow.png" class="DeleteRow" onclick="DeleteRow('. $value .')"> </td>';
+		echo '<td class="EditRow_'. $value .'"> <img src="img/DeleteRow.png" class="DeleteRow"> </td>';
 		echo '</tr>';
 		
 		$CounterDisplay++;
@@ -161,7 +162,7 @@ foreach($JobNumber as $value) {
 		echo '<td id="JobNotes_'. $value .'" class="EditJob">'. nl2br($JobNotes[$CounterDisplay]) .'</td>';
 		echo '<td id="JobUnitPrice'. $value .'" class="EditJob"> $'. number_format($JobPrice[$CounterDisplay], 2) .'</td>';
 		echo '<td id="JobLinePrice_'. $value .'" class="EditJob"> $'. $LineTotal .'</td>';
-		echo '<td class="EditRow_'. $value .'"> <img src="img/DeleteRow.png" class="DeleteRow" onclick="DeleteRow('. $value .')"> </td>';
+		echo '<td class="EditRow_'. $value .'"> <img src="img/DeleteRow.png" class="DeleteRow"> </td>';
 		echo '</tr>';
 		
 		$CounterDisplay++;
