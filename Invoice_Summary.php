@@ -12,14 +12,11 @@ error_reporting(0);
 
 // TO-DO LIST
 // ----------
-// . Add prompt to select client when blank page (first opened)
+// . Add prompt to select client when first opened. Quick static tutorial.
+// . Footer: [Customer Name - X invoices worth Z amount] > [E-mail | Print] / Submit		- Live status bar. Fade in/out for new customer selected.
 
-// . Footer layout: [ Grand total of X invoices selected for Y (customer). ] [Print] [E-mail] [Submit] - auto update grant total when checkboxes are ticked etc
-// . This can be changed to [ Successfully invoiced Y customer - here is invoice number] - sort of like a status bar. centered?? ya. fade in/fade out effect
-// . Header menu instead for: Undo (?) / E-mail / Print / Submit
 
 // . -------------------------MYOB---------------------------
-
 // . Submit one job to MYOB - return invoice number
 // . Submit multiple jobs to MYOB - return invoice number
 // . Error-check: if item does not exist in MYOB
@@ -74,7 +71,7 @@ $(document).ready(function() {
 function GetJobDetails(cardid) {
 
 	$.ajax({
-		url: "query.php",
+		url: "Invoice_Detail.php",
 		type: "POST",
 		data: {input : cardid},
 		success: function(data) {
@@ -108,8 +105,12 @@ foreach($CardID as $value) {
 </div>
 
 <div id="ClientDetail">
-
 <span id="DisplayJobDetails"></span>
+</div>
+
+<div id="ClientFooter">
+
+
 
 </div>
 

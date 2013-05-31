@@ -2,7 +2,7 @@
 	font-family:"Calibri";
 }
 
-/* ec-invoice.php */
+/* 		Invoice-Summary.php		 */
 
 .ClientSummary {
 	height: 90%;
@@ -49,7 +49,7 @@ tr#JobList:hover {
 	padding-left: 10px;
 }
 
-/* query.php */
+/* 			Invoice_Detail.php		 */
 
 #ClientDetail {
 	width: 71%;
@@ -91,22 +91,33 @@ td.JobTech {
 
 td[id^="JobCode"] {
 	width: 75px;
+	max-width: 75px;
+	word-wrap: normal;
 }
 
 td[id^="JobNotes"] {
 	width: 800px;
+	max-width: 800px;
+	white-space: pre-wrap;
+	word-wrap: normal;
 }
 
 td[id^="JobQty"] {
 	width: 60px;
+	max-width: 60px;
+	word-wrap: normal;
 }
 
 td[id^="JobUnitPrice"] {
 	width: 60px;
+	max-width: 60px;
+	word-wrap: normal;
 }
 
 td[id^="JobLinePrice"] {
 	width: 60px;
+	max-width: 60px;
+	word-wrap: normal;
 }
 
 [id^="JobTable"] {
@@ -128,7 +139,7 @@ td[id^="JobLinePrice"] {
 	border-style: none		!important;
 	padding-left: 5px;
 	margin-top: 5px;
-	/* visibility: hidden; */
+	/* visibility: hidden;  fix later */
 }
 
 .AddRow, .DeleteRow {
