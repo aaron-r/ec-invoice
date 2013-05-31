@@ -16,15 +16,16 @@ error_reporting(0);
 // ----------
 // . Output Grand Total for customer (do this in Invoice_Summary.php)						
 // . Display date along-side each job number and job title.
-// . Deleting jobs: make sure you're unable to delete LAST <tr> - basically put in blank <tr> instead			
+// . Deleting jobs: make sure you're unable to delete LAST <tr> - basically put in blank <tr> instead
+// . 
 
 // . Auto-update totals for: (ea. 'Line Total' = Qty * Unit Price) and (Invoice Total = sum of all 'Line Total')
 
 $DisplayCardID = $_POST['input'];
 
-$DatabaseHost 		= 'localhost';
+$DatabaseHost 		= '10.10.0.5';
 $DatabaseName 		= 'echips_v2';
-$DatabaseUser		= 'root';
+$DatabaseUser		= 'trevorp';
 $DatabasePass		= 'megacool';
 $CounterStart 		= 0;
 $CounterDisplay		= 0;
@@ -60,7 +61,7 @@ foreach($FirstQuery as $row) {
 $(document).ready(function() {
 	$('#ClientDetail').animate({ scrollTop: 0 }, 'medium');		// Auto-scroll to top of page
 	// CSS hide visible for EditRow here?
-	$('[class^="EditRow"]').fadeOut(1000); // tmp
+	$('[class^="EditRow"]').fadeOut(1000);
 });
 
 // Edit specific job table
@@ -117,8 +118,8 @@ foreach($JobNumber as $value) {
 
 	if ($value != $JobNumber[$CounterDisplay - 1]) {
 	
-		$LineTotal = number_format(($JobQty[$CounterDisplay] * $JobPrice[$CounterDisplay]), 2);
-		$JobTotal = number_format(($JobTotal + $LineTotal), 2);
+		$LineTotal = number_format($JobQty[$CounterDisplay] * $JobPrice[$CounterDisplay], 2);
+		$JobTotal = number_format( (str_replace(",", "", $JobTotal) + str_replace(",", "", $LineTotal)), 2);
 		
 		echo '<table id="JobTable_'. $value .'">';
 		
@@ -153,10 +154,9 @@ foreach($JobNumber as $value) {
 	
 	else {
 		
-		$LineTotal = number_format(($JobQty[$CounterDisplay] * $JobPrice[$CounterDisplay]), 2);
-		$JobTotal = number_format(($JobTotal + $LineTotal), 2);
+		$LineTotal = number_format($JobQty[$CounterDisplay] * $JobPrice[$CounterDisplay], 2);
+		$JobTotal = number_format( (str_replace(",", "", $JobTotal) + str_replace(",", "", $LineTotal)), 2);
 	
-		//echo '<tbody>';
 		echo '<tr id="JobBorder">';
 		echo '<td class="JobTech" bgcolor='.$TechColour[$CounterDisplay].'>'. $Tech[$CounterDisplay] .'</td>';
 		echo '<td id="JobQty_'. $value .'" class="EditJob">'. $JobQty[$CounterDisplay] .'</td>';
@@ -173,7 +173,8 @@ foreach($JobNumber as $value) {
 	if ($value != $JobNumber[$CounterDisplay]) {
 	
 		echo '</table>';
-		echo '<div id="DisplayJobTotal">Total: <b>$'. $JobTotal .' </b> </div>';
+		
+		echo '<div id="DisplayJobTotal"> <span id="TotalLabel">Total:</span> <b>$'. $JobTotal .' </b> </div>';
 		
 		$JobTotal = 0;
 	}

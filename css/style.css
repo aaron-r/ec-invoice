@@ -6,7 +6,7 @@
 
 .ClientSummary {
 	height: 90%;
-	width: 28%;
+	width: 30%;
 	overflow-x: hidden;
 	overflow-y: scroll;
 	float: left;
@@ -37,8 +37,8 @@ tr#JobList:hover {
 }
 
 .UnbilledJobs {
-	padding-left: 10px;
-	padding-right: 20px;
+	padding-left: 30px;
+	padding-right: 25px;
 }
 
 .JobTotalValue { 
@@ -52,7 +52,7 @@ tr#JobList:hover {
 /* 			Invoice_Detail.php		 */
 
 #ClientDetail {
-	width: 71%;
+	width: 69%;
 	height: 90%;
 	float: left;
 	overflow-x: hidden;
@@ -96,8 +96,8 @@ td[id^="JobCode"] {
 }
 
 td[id^="JobNotes"] {
-	width: 800px;
-	max-width: 800px;
+	width: 750px;
+	max-width: 750px;
 	white-space: pre-wrap;
 	word-wrap: normal;
 }
@@ -109,13 +109,13 @@ td[id^="JobQty"] {
 }
 
 td[id^="JobUnitPrice"] {
-	width: 60px;
+	width: 65px;
 	max-width: 60px;
 	word-wrap: normal;
 }
 
 td[id^="JobLinePrice"] {
-	width: 60px;
+	width: 65px;
 	max-width: 60px;
 	word-wrap: normal;
 }
@@ -128,11 +128,15 @@ td[id^="JobLinePrice"] {
 #DisplayJobTotal {
 	background-color: rgb(255,235,205);
 	position: relative;
-	width: 123px;
-	left: 1005px;
+	width: 133px;
+	left: 946px;
 	margin-bottom: 20px;
 	text-align: right;
 	padding-right: 5px;
+}
+
+#TotalLabel {
+	margin-right: 300px;
 }
 
 [class^="EditRow"] {

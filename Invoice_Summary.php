@@ -24,9 +24,9 @@ error_reporting(0);
 // . Auto e-mail from MYOB
 // . Auto print from MYOB
 
-$DatabaseHost 		= 'localhost';
+$DatabaseHost 		= '10.10.0.5';
 $DatabaseName 		= 'echips_v2';
-$DatabaseUser		= 'root';
+$DatabaseUser		= 'trevorp';
 $DatabasePass		= 'megacool';
 $CounterStart 		= 0;
 $CounterDisplay		= 0;
@@ -109,8 +109,6 @@ foreach($CardID as $value) {
 </div>
 
 <div id="ClientFooter">
-
-
 
 </div>
 
