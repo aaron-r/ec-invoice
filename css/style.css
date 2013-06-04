@@ -125,18 +125,21 @@ td[id^="JobLinePrice"] {
 	border-collapse: collapse;
 }
 
+#DisplayJobLabel {
+	margin-left: 905px;
+	margin-right: 5px;
+	height: auto;
+	float: left;
+}
+
 #DisplayJobTotal {
 	background-color: rgb(255,235,205);
-	position: relative;
 	width: 133px;
-	left: 946px;
+	height: auto;
+	float: left;
 	margin-bottom: 20px;
 	text-align: right;
 	padding-right: 5px;
-}
-
-#TotalLabel {
-	margin-right: 300px;
 }
 
 [class^="EditRow"] {

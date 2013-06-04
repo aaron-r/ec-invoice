@@ -17,15 +17,14 @@ error_reporting(0);
 // . Output Grand Total for customer (do this in Invoice_Summary.php)						
 // . Display date along-side each job number and job title.
 // . Deleting jobs: make sure you're unable to delete LAST <tr> - basically put in blank <tr> instead
-// . 
 
 // . Auto-update totals for: (ea. 'Line Total' = Qty * Unit Price) and (Invoice Total = sum of all 'Line Total')
 
 $DisplayCardID = $_POST['input'];
 
-$DatabaseHost 		= '10.10.0.5';
+$DatabaseHost 		= 'localhost';
 $DatabaseName 		= 'echips_v2';
-$DatabaseUser		= 'trevorp';
+$DatabaseUser		= 'root';
 $DatabasePass		= 'megacool';
 $CounterStart 		= 0;
 $CounterDisplay		= 0;
@@ -174,7 +173,10 @@ foreach($JobNumber as $value) {
 	
 		echo '</table>';
 		
-		echo '<div id="DisplayJobTotal"> <span id="TotalLabel">Total:</span> <b>$'. $JobTotal .' </b> </div>';
+		echo '	<div id="DisplayJobWrapper">
+					<div id="DisplayJobLabel"> Total: </div> 
+					<div id="DisplayJobTotal"> <b>$'. $JobTotal .' </b> </div>
+				</div>';
 		
 		$JobTotal = 0;
 	}

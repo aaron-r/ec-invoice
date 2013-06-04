@@ -15,7 +15,6 @@ error_reporting(0);
 // . Add prompt to select client when first opened. Quick static tutorial.
 // . Footer: [Customer Name - X invoices worth Z amount] > [E-mail | Print] / Submit		- Live status bar. Fade in/out for new customer selected.
 
-
 // . -------------------------MYOB---------------------------
 // . Submit one job to MYOB - return invoice number
 // . Submit multiple jobs to MYOB - return invoice number
@@ -24,9 +23,9 @@ error_reporting(0);
 // . Auto e-mail from MYOB
 // . Auto print from MYOB
 
-$DatabaseHost 		= '10.10.0.5';
+$DatabaseHost 		= 'localhost';
 $DatabaseName 		= 'echips_v2';
-$DatabaseUser		= 'trevorp';
+$DatabaseUser		= 'root';
 $DatabasePass		= 'megacool';
 $CounterStart 		= 0;
 $CounterDisplay		= 0;
