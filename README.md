@@ -4,4 +4,3 @@
 * Single page application - no need to refresh page!
 * Live editable data, automatically updates!
 * Fancy animations and more!
-* Fancy animations and more!
