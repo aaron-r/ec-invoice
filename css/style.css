@@ -102,10 +102,12 @@ td[id^="JobNotes"] {
 	word-wrap: normal;
 }
 
-td[id^="JobQty"] {
+[id^="JobQty"] {
 	width: 60px;
 	max-width: 60px;
 	word-wrap: normal;
+/* 	border: 0px;
+	background: none; */
 }
 
 td[id^="JobUnitPrice"] {

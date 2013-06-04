@@ -13,12 +13,20 @@
 error_reporting(0);
 
 // TO-DO LIST
-// ----------
-// . Output Grand Total for customer (do this in Invoice_Summary.php)						
+// ----------	
+// . Auto-update totals for: (ea. 'Line Total' = Qty * Unit Price) and (Invoice Total = sum of all 'Line Total')				
 // . Display date along-side each job number and job title.
 // . Deleting jobs: make sure you're unable to delete LAST <tr> - basically put in blank <tr> instead
+// . Prompt before a row is deleted.
+// . [CSS] - Completely hide (+/-) signs when page loads. (really needed?)
 
-// . Auto-update totals for: (ea. 'Line Total' = Qty * Unit Price) and (Invoice Total = sum of all 'Line Total')
+// . -------------------------MYOB---------------------------
+// . Submit one job to MYOB - return invoice number
+// . Submit multiple jobs to MYOB - return invoice number
+// . Error-check: if item does not exist in MYOB
+// . Error check: if line exceeds 255 characters
+// . Auto e-mail from MYOB
+// . Auto print from MYOB
 
 $DisplayCardID = $_POST['input'];
 
@@ -90,6 +98,7 @@ $('img#EditJobHeader').click(function() {
 
 });
 
+// Add new blank row to table
 function AddRow(EditJobNumber) {
 
 	$(".EditRow_" + EditJobNumber).css('visibility', 'visible');
@@ -105,7 +114,31 @@ function AddRow(EditJobNumber) {
 
 // Prompt and delete specific row
 $('.DeleteRow').live('click', function() {
-	$(this).closest('tr').remove();
+	
+	var ConfirmDelete = confirm("Delete row?");
+	
+	if (ConfirmDelete==true) {
+		$(this).closest('tr').remove();
+	} else {
+	}
+	
+	// If last row, just call AddRow for another?
+});
+
+// Auto-calculate totals when fields are changed
+$('.EditJob').keyup(function() {
+	
+	// Detect for letters within Qty, Unit Price and Line Total
+	// ... and ensure they CANT be inputted!
+
+	var EditJobQty = $(this).closest('tr').children('[id^="JobQty"]').text();
+	var EditUnitPrice = $(this).closest('tr').children('[id^="JobUnitPrice"]').text();
+	var EditLineTotal = $(this).closest('tr').children('[id^="JobLinePrice"]').text();
+		
+	var EditUnitPrice = EditUnitPrice.replace("$", "");
+	var EditLineTotal = (EditJobQty * EditUnitPrice);
+	alert("Line Total is: " + EditJobQty + " [*] " + EditUnitPrice );
+
 });
 
 </script>
@@ -120,6 +153,7 @@ foreach($JobNumber as $value) {
 		$LineTotal = number_format($JobQty[$CounterDisplay] * $JobPrice[$CounterDisplay], 2);
 		$JobTotal = number_format( (str_replace(",", "", $JobTotal) + str_replace(",", "", $LineTotal)), 2);
 		
+		// Initial header/table constructed
 		echo '<table id="JobTable_'. $value .'">';
 		
 		echo '<tr id="JobHeader" class="">';
@@ -137,9 +171,10 @@ foreach($JobNumber as $value) {
 			  <td class="EditRow_'. $value .'"> <img src="img/AddRow.png" class="AddRow" onclick="AddRow('. $value .')"> </td>
 			  </tr>';
 
+		// First job notes displayed
 		echo '<tr id="JobBorder">';
 		echo '<td class="JobTech" bgcolor='.$TechColour[$CounterDisplay].'>'. $Tech[$CounterDisplay] .'</td>';
-		echo '<td id="JobQty_'. $value .'" class="EditJob"> '. $JobQty[$CounterDisplay] .'</td>';
+		echo '<td id="JobQty_'. $value .'" class="EditJob">'. $JobQty[$CounterDisplay] .'</td>';
 		echo '<td id="JobCode_'. $value .'" class="EditJob">'. $JobCode[$CounterDisplay] .'</td>';
 		echo '<td id="JobNotes" class="EditJob">'. htmlentities($JobNotes[$CounterDisplay]) .'</td>';
 		echo '<td id="JobUnitPrice_'. $value .'" class="EditJob"> $'. number_format($JobPrice[$CounterDisplay], 2) .'</td>';
@@ -156,12 +191,13 @@ foreach($JobNumber as $value) {
 		$LineTotal = number_format($JobQty[$CounterDisplay] * $JobPrice[$CounterDisplay], 2);
 		$JobTotal = number_format( (str_replace(",", "", $JobTotal) + str_replace(",", "", $LineTotal)), 2);
 	
+		// Remaining job notes displayed; looped until end
 		echo '<tr id="JobBorder">';
 		echo '<td class="JobTech" bgcolor='.$TechColour[$CounterDisplay].'>'. $Tech[$CounterDisplay] .'</td>';
 		echo '<td id="JobQty_'. $value .'" class="EditJob">'. $JobQty[$CounterDisplay] .'</td>';
 		echo '<td id="JobCode_'. $value .'" class="EditJob">'. $JobCode[$CounterDisplay] .'</td>';
 		echo '<td id="JobNotes_'. $value .'" class="EditJob">'. htmlentities($JobNotes[$CounterDisplay]) .'</td>';
-		echo '<td id="JobUnitPrice'. $value .'" class="EditJob"> $'. number_format($JobPrice[$CounterDisplay], 2) .'</td>';
+		echo '<td id="JobUnitPrice_'. $value .'" class="EditJob"> $'. number_format($JobPrice[$CounterDisplay], 2) .'</td>';
 		echo '<td id="JobLinePrice_'. $value .'" class="EditJob"> $'. $LineTotal .'</td>';
 		echo '<td class="EditRow_'. $value .'"> <img src="img/DeleteRow.png" class="DeleteRow"> </td>';
 		echo '</tr>';
@@ -182,8 +218,6 @@ foreach($JobNumber as $value) {
 	}
 
 }
-
-// echo '<td id="JobNotes" class="EditJob">'. nl2br($JobNotes[$CounterDisplay]) .'</td>';
 
 ?>
 

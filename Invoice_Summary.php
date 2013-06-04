@@ -15,14 +15,6 @@ error_reporting(0);
 // . Add prompt to select client when first opened. Quick static tutorial.
 // . Footer: [Customer Name - X invoices worth Z amount] > [E-mail | Print] / Submit		- Live status bar. Fade in/out for new customer selected.
 
-// . -------------------------MYOB---------------------------
-// . Submit one job to MYOB - return invoice number
-// . Submit multiple jobs to MYOB - return invoice number
-// . Error-check: if item does not exist in MYOB
-// . Error check: if line exceeds 255 characters
-// . Auto e-mail from MYOB
-// . Auto print from MYOB
-
 $DatabaseHost 		= 'localhost';
 $DatabaseName 		= 'echips_v2';
 $DatabaseUser		= 'root';
@@ -87,6 +79,7 @@ function GetJobDetails(cardid) {
 
 <?
 
+// Display summary list of all clients with outstanding invoices
 foreach($CardID as $value) {
 	
 	echo '
