@@ -2,7 +2,7 @@
 	font-family:"Calibri";
 }
 
-/* 		Invoice-Summary.php		 */
+/*	Invoice-Summary.php  */
 
 .ClientSummary {
 	height: 90%;
@@ -49,7 +49,7 @@ tr#JobList:hover {
 	padding-left: 10px;
 }
 
-/* 			Invoice_Detail.php		 */
+/* 	Invoice_Detail.php  */
 
 #ClientDetail {
 	width: 69%;
@@ -89,7 +89,7 @@ td.JobTech {
 	vertical-align: text-top;
 }
 
-td[id^="JobCode"] {
+[id^="JobCode"] {
 	width: 75px;
 	max-width: 75px;
 	word-wrap: normal;
@@ -110,13 +110,13 @@ td[id^="JobNotes"] {
 	background: none; */
 }
 
-td[id^="JobUnitPrice"] {
+[id^="JobUnitPrice"] {
 	width: 65px;
 	max-width: 60px;
 	word-wrap: normal;
 }
 
-td[id^="JobLinePrice"] {
+[id^="JobLineTotal"] {
 	width: 65px;
 	max-width: 60px;
 	word-wrap: normal;
