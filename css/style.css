@@ -127,6 +127,14 @@ td[id^="JobNotes"] {
 	border-collapse: collapse;
 }
 
+[id^="EditTotal"] {
+	font-weight: bold;
+}
+
+[id^="EditTotal"]:before {
+	content: "$";
+}
+
 #DisplayJobLabel {
 	margin-left: 905px;
 	margin-right: 5px;

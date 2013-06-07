@@ -1,9 +1,10 @@
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="css/style.css">
-<script src="plugins/jquery.min.js"></script>
-<script src="plugins/jquery-ui.min.js"></script>
-<script src="plugins/jquery.editable.min.js"></script>
+<script src="js/jquery.min.js"></script>
+<script src="js/jquery-ui.min.js"></script>
+<script src="js/jquery.editable.min.js"></script>
+<script src="js/jquery.numeric.js"></script>
 </head>
 
 <body>
@@ -13,11 +14,8 @@
 error_reporting(0);
 
 // TO-DO LIST
-// ----------	
-// . Auto-update totals for: (ea. 'Line Total' = Qty * Unit Price) and (Invoice Total = sum of all 'Line Total')				
-// . Display date along-side each job number and job title.
-// . Deleting rows: make sure you're unable to delete LAST <tr> - basically put in blank <tr> instead
-// . Ensure editing works again for INPUT boxes!
+// ----------				
+// . When deleting rows - ensure Prompt only appears ONCE.
 
 // . -------------------------MYOB---------------------------
 // . Submit one job to MYOB - return invoice number
@@ -26,6 +24,16 @@ error_reporting(0);
 // . Error check: if line exceeds 255 characters
 // . Auto e-mail from MYOB
 // . Auto print from MYOB
+
+// . ------------------------COSMETIC-------------------------
+// . Deleting rows: make sure you're unable to delete LAST <tr> - basically put in blank <tr> instead.
+//	 		- (If last row, just call AddRow for another? Need this to NOT break the exisiting table!)
+// . Have [+/-] buttons be immediantly invisible when a new customer is selected.
+// . Place a $ sign in front of Unit Price and Line Total.
+// . Move Job Title up 5-10px.
+// . Input boxes - remove styling to appear plain.
+
+date_default_timezone_set('Australia/Perth');
 
 $DisplayCardID = $_POST['input'];
 
@@ -39,7 +47,7 @@ $CounterDisplay		= 0;
 $Database = new PDO('mysql:host='.$DatabaseHost.';dbname='.$DatabaseName.'',$DatabaseUser,$DatabasePass) or die("Oh no, I can't connect to the database!");
 
 $FirstQuery = $Database->query("SELECT customers.cardid, customers.lastname, customers.firstname, 
-								jobdetails.jobnumber, jobitems.qtycharged, jobitems.quotedprice, jobitems.myobcode, jobdetails.title, 
+								jobdetails.jobnumber, jobitems.qtycharged, jobitems.quotedprice, jobitems.myobcode, jobdetails.title, jobdetails.appointmentdate,
 								jobitems.qtysupplied, jobitems.quotedprice, jobitems.notes, jobitems.staffid, staff.shortname, staff.staffcolor
 								FROM jobdetails, customers, jobitems, staff
 								WHERE jobdetails.customerid = customers.cardid
@@ -52,6 +60,7 @@ foreach($FirstQuery as $row) {
 	$CardID[$CounterStart]		= $row['cardid'];
 	$JobNumber[$CounterStart] 	= $row['jobnumber'];
 	$JobTitle[$CounterStart] 	= $row['title'];
+	$JobDate[$CounterStart]		= $row['appointmentdate'];
 	$JobNotes[$CounterStart]	= $row['notes'];
 	$JobQty[$CounterStart]		= $row['qtysupplied'];
 	$JobCode[$CounterStart]		= $row['myobcode'];
@@ -67,6 +76,9 @@ foreach($FirstQuery as $row) {
 $(document).ready(function() {
 	$('#ClientDetail').animate({ scrollTop: 0 }, 'medium');		// Auto-scroll to top of page
 	$('[class^="EditRow"]').fadeOut(1000);
+	$('[id^="JobQty"]').numeric();
+	$('[id^="JobUnitPrice"]').numeric();
+	$('[id^="JobLineTotal"]').numeric();
 });
 
 // Edit specific job table
@@ -81,14 +93,22 @@ $('img#EditJobHeader').click(function() {
 	$(".EditRow_" + EditJobNumber).css('visibility', 'visible');
 	$(".EditRow_" + EditJobNumber).fadeIn(1000);
 
-	$('#JobTable_' + EditJobNumber + ' td.EditJob').editable({
+	$('td#JobNotes_' + EditJobNumber).editable({
 		lineBreaks: true,
 	});
 
+	$('input#JobQty_' + EditJobNumber).prop("disabled", false);
+	$('input#JobCode_' + EditJobNumber).prop("disabled", false);
+	$('input#JobUnitPrice_' + EditJobNumber).prop("disabled", false);
+	$('input#JobLineTotal_' + EditJobNumber).prop("disabled", false);
 	
 	if (IsJobEditable == "IsEditable") {
-		$('#JobTable_' + EditJobNumber + ' td.EditJob').editable('destroy');
+		$('td#JobNotes_' + EditJobNumber).editable('destroy');
 		$(this).closest('tr').animate({"backgroundColor":"rgb(224,224,255)"}, 400);
+		$('input#JobQty_' + EditJobNumber).prop("disabled", true);
+		$('input#JobCode_' + EditJobNumber).prop("disabled", true);
+		$('input#JobUnitPrice_' + EditJobNumber).prop("disabled", true);
+		$('input#JobLineTotal_' + EditJobNumber).prop("disabled", true);
 		
 	$(".EditRow_" + EditJobNumber).fadeOut(1000);
 	
@@ -101,7 +121,7 @@ function AddRow(EditJobNumber) {
 
 	$(".EditRow_" + EditJobNumber).css('visibility', 'visible');
 
-	var AddRowString = '<tr id="JobBorder"> <td class="JobTech"> </td> <td id="JobQty" class="EditJob"> </td> <td id="JobCode" class="EditJob"> </td> <td id="JobNotes" class="EditJob">&nbsp;</td> <td id="JobUnitPrice" class="EditJob"> </td> <td id="JobLinePrice" class="EditJob"> </td> <td class="EditRow_'+EditJobNumber+'"> <img src="img/DeleteRow.png" class="DeleteRow"> </td>';
+	var AddRowString = '<tr id="JobBorder"> <td class="JobTech"> </td> <td id="JobQty"> </td> <td id="JobCode"> </td> <td id="JobNotes">&nbsp;</td> <td id="JobUnitPrice"> </td> <td id="JobLinePrice"> </td> <td class="EditRow_'+EditJobNumber+'"> <img src="img/DeleteRow.png" class="DeleteRow"> </td>';
 	$("#JobTable_" + EditJobNumber).last().append(AddRowString);
 	
 	$('#JobTable_' + EditJobNumber + ' td.EditJob').editable({
@@ -113,31 +133,35 @@ function AddRow(EditJobNumber) {
 // Prompt and delete specific row
 $('.DeleteRow').click(function(e) {
 	
-	// TO-DO: make sure confirm alert only appears ONCE
+	// * TO-DO: make sure confirm alert only appears ONCE
 	e.stopPropagation();
 	
 	if (confirm("Delete row?")) {
 		$(this).closest('tr').remove();
 	}
-	// TO-DO: If last row, just call AddRow for another? Dont break table!
+
 });
 
 // Auto-calculate totals when fields are changed
 $('.EditJobContents').keyup(function() {
 	
-	// TO-DO:
-	// All 		- restrict fields for JUST numbers
-	// Qty 		- restrict to just ONE digit
-	// Totals 	- ensure TWO decimal places AND dollar sign ($) 
+	var FinalJobTotal = 0;
+
+	var EditJobNumber = $(this).attr('id');
+	EditJobNumber = EditJobNumber.replace(/\D/g,'');	// Strip all non-numerical characters from string
 	
 	var EditJobQty = $(this).closest('tr').find("input[id^=JobQty]").val();
 	var EditUnitPrice = $(this).closest('tr').find("input[id^=JobUnitPrice]").val();
 	var EditUnitPrice = EditUnitPrice.replace("$", "");
 	var EditLineTotal = (EditJobQty * EditUnitPrice);
 	
-	$(this).closest('tr').find("input[id^=JobLineTotal]").val(EditLineTotal);
-
-	$(this).closest('div').find("div[id^=DisplayJobTotal]").val('foobar');
+	$(this).closest('tr').find("input[id^=JobLineTotal]").val(EditLineTotal.toFixed(2));
+	
+	$('input#JobLineTotal_' + EditJobNumber).each(function() {
+		FinalJobTotal = parseInt(FinalJobTotal) + parseInt($(this).val());
+	});
+	
+	$('#EditTotal_' + EditJobNumber).html(FinalJobTotal.toFixed(2));
 	
 });
 
@@ -153,11 +177,19 @@ foreach($JobNumber as $value) {
 		$LineTotal = number_format($JobQty[$CounterDisplay] * $JobPrice[$CounterDisplay], 2);
 		$JobTotal = number_format( (str_replace(",", "", $JobTotal) + str_replace(",", "", $LineTotal)), 2);
 		
+		if ($JobDate[$CounterDisplay] != NULL) {
+			$DisplayJobDate = new DateTime($JobDate[$CounterDisplay]);
+			$DisplayJobDate = " (" . $DisplayJobDate->format('M jS') . ")";
+		} else {
+			$DisplayJobDate = "";
+		}
+		
 		// Initial header/table constructed
 		echo '<table id="JobTable_'. $value .'">';
 		
 		echo '<tr id="JobHeader" class="">';
-		echo '<td colspan=5> <input type=checkbox checked value='.$value.'> <b>&nbsp;Job #'.$JobNumber[$CounterDisplay] .' - '. $JobTitle[$CounterDisplay]. '</b> </td>';
+		echo '<td colspan=5> <input type=checkbox checked value='.$value.'> 
+		<b>&nbsp;Job #'.$JobNumber[$CounterDisplay] .' - '. $JobTitle[$CounterDisplay] . $DisplayJobDate .'</b> </td>';
 		echo '<td> <img id="EditJobHeader" src="img/EditIcon.png" class='.$value.'> </td>';
 		echo '</tr>';
 		
@@ -174,11 +206,11 @@ foreach($JobNumber as $value) {
 		// First job notes displayed
 		echo '<tr id="JobBorder">';
 		echo '<td class="JobTech" bgcolor='.$TechColour[$CounterDisplay].'>'. $Tech[$CounterDisplay] .'</td>';
-		echo '<td class="EditJob"> <input id="JobQty_'. $value .'" 		class="EditJobContents" value='. $JobQty[$CounterDisplay] .'> </td>';
-		echo '<td class="EditJob"> <input id="JobCode_'. $value .'" 		class="EditJobContents" value='. $JobCode[$CounterDisplay] .'> </td>'; //id="JobCode_'. $value .'"
-		echo '<td id="JobNotes" class="EditJob">'. htmlentities($JobNotes[$CounterDisplay]) .'</td>';
-		echo '<td class="EditJob"> <input id="JobUnitPrice_'. $value .'" class="EditJobContents" value='. number_format($JobPrice[$CounterDisplay], 2) .'> </td>';
-		echo '<td class="EditJob"> <input id="JobLineTotal_'. $value .'" class="EditJobContents" value='. $LineTotal .'> </td>';
+		echo '<td> <input id="JobQty_'. $value .'" value='. $JobQty[$CounterDisplay] .' class="EditJobContents" disabled=true> </td>';
+		echo '<td> <input id="JobCode_'. $value .'" value='. $JobCode[$CounterDisplay] .' class="EditJobContents" disabled=true> </td>';
+		echo '<td id="JobNotes_'. $value .'">'. htmlentities($JobNotes[$CounterDisplay]) .'</td>';
+		echo '<td> <input id="JobUnitPrice_'. $value .'" value='. number_format($JobPrice[$CounterDisplay], 2) .' class="EditJobContents" disabled=true> </td>';
+		echo '<td> <input id="JobLineTotal_'. $value .'" value='. $LineTotal .' class="EditJobContents" disabled=true> </td>';
 		echo '<td class="EditRow_'. $value .'"> <img src="img/DeleteRow.png" class="DeleteRow"> </td>';
 		echo '</tr>';
 		
@@ -194,11 +226,11 @@ foreach($JobNumber as $value) {
 		// Remaining job notes displayed; loops until end
 		echo '<tr id="JobBorder">';
 		echo '<td class="JobTech" bgcolor='.$TechColour[$CounterDisplay].'>'. $Tech[$CounterDisplay] .'</td>';
-		echo '<td class="EditJob"> <input id="JobQty_'. $value .'" 		class="EditJobContents" value='. $JobQty[$CounterDisplay] .'> </td>';
-		echo '<td class="EditJob"> <input id="JobCode_'. $value .'" 		class="EditJobContents" value='. $JobCode[$CounterDisplay] .'> </td>'; //id="JobCode_'. $value .'"
-		echo '<td id="JobNotes" class="EditJob">'. htmlentities($JobNotes[$CounterDisplay]) .'</td>';
-		echo '<td class="EditJob"> <input id="JobUnitPrice_'. $value .'" class="EditJobContents" value='. number_format($JobPrice[$CounterDisplay], 2) .'> </td>';
-		echo '<td class="EditJob"> <input id="JobLineTotal_'. $value .'" class="EditJobContents" value='. $LineTotal .'> </td>';
+		echo '<td> <input id="JobQty_'. $value .'" value='. $JobQty[$CounterDisplay] .' class="EditJobContents" disabled=true> </td>';
+		echo '<td> <input id="JobCode_'. $value .'" value='. $JobCode[$CounterDisplay] .' class="EditJobContents" disabled=true> </td>';
+		echo '<td id="JobNotes_'. $value .'" class="EditJobContents">'. htmlentities($JobNotes[$CounterDisplay]) .'</td>';
+		echo '<td> <input id="JobUnitPrice_'. $value .'" value='. number_format($JobPrice[$CounterDisplay], 2) .' class="EditJobContents" disabled=true> </td>';
+		echo '<td> <input id="JobLineTotal_'. $value .'" value='. $LineTotal .' class="EditJobContents" disabled=true> </td>';
 		echo '<td class="EditRow_'. $value .'"> <img src="img/DeleteRow.png" class="DeleteRow"> </td>';
 		echo '</tr>';
 		
@@ -211,7 +243,7 @@ foreach($JobNumber as $value) {
 		
 		echo '	<div id="DisplayJobWrapper">
 					<div id="DisplayJobLabel"> Total: </div> 
-					<div id="DisplayJobTotal"> <b>$'. $JobTotal .' </b> </div>
+					<div id="DisplayJobTotal"> <span id="EditTotal_'. $value .'"> '. $JobTotal .' </span> </div>
 				</div>';
 				
 		$JobTotal = 0;

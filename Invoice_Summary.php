@@ -1,7 +1,7 @@
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="css/style.css">
-<script src="plugins/jquery.min.js"></script>
+<script src="js/jquery.min.js"></script>
 </head>
 
 <body>
