@@ -14,8 +14,10 @@
 error_reporting(0);
 
 // TO-DO LIST
-// ----------				
+// ----------
+// . Gather job info, line-by-line for jobs that are TICKED. (Check 255 characters)			
 // . When deleting rows - ensure Prompt only appears ONCE.
+// . change total when row is deleted (subtract)
 
 // . -------------------------MYOB---------------------------
 // . Submit one job to MYOB - return invoice number
@@ -31,7 +33,7 @@ error_reporting(0);
 // . Have [+/-] buttons be immediantly invisible when a new customer is selected.
 // . Place a $ sign in front of Unit Price and Line Total.
 // . Move Job Title up 5-10px.
-// . Input boxes - remove styling to appear plain.
+// . Input boxes - remove styling to appear like plain text.
 
 date_default_timezone_set('Australia/Perth');
 
@@ -121,25 +123,44 @@ function AddRow(EditJobNumber) {
 
 	$(".EditRow_" + EditJobNumber).css('visibility', 'visible');
 
-	var AddRowString = '<tr id="JobBorder"> <td class="JobTech"> </td> <td id="JobQty"> </td> <td id="JobCode"> </td> <td id="JobNotes">&nbsp;</td> <td id="JobUnitPrice"> </td> <td id="JobLinePrice"> </td> <td class="EditRow_'+EditJobNumber+'"> <img src="img/DeleteRow.png" class="DeleteRow"> </td>';
+	var AddRowString = 
+	'  <tr id="JobBorder"> '
+	+' <td class="JobTech"> </td>'
+	+' <td> <input id="JobQty_'+EditJobNumber+'" class="EditJobContents"> </td>'
+	+' <td> <input id="JobCode_'+EditJobNumber+'" class="EditJobContents"> </td>'
+	+' <td id="JobNotes_'+EditJobNumber+'"></td>'
+	+' <td> <input id="JobUnitPrice_'+EditJobNumber+'" class="EditJobContents"> </td>'
+	+' <td> <input id="JobLineTotal_'+EditJobNumber+'" class="EditJobContents"> </td>'
+	+' <td class="EditRow_'+EditJobNumber+'"> <img src="img/DeleteRow.png" class="DeleteRow"> </td>'
+	+' </tr>';
+	
 	$("#JobTable_" + EditJobNumber).last().append(AddRowString);
 	
-	$('#JobTable_' + EditJobNumber + ' td.EditJob').editable({
+	$('td#JobNotes_' + EditJobNumber).editable({
 		lineBreaks: true,
 	});
+	
+	$('[id^="JobQty"]').numeric();
+	$('[id^="JobUnitPrice"]').numeric();
+	$('[id^="JobLineTotal"]').numeric();
 	
 };
 
 // Prompt and delete specific row
-$('.DeleteRow').click(function(e) {
+$('.DeleteRow').click(function() {
+	
+	alert("foobar");
 	
 	// * TO-DO: make sure confirm alert only appears ONCE
-	e.stopPropagation();
+	// * TO-DO: change total when row is deleted (subtract)
+	
+/* 	e.stopPropagation();
 	
 	if (confirm("Delete row?")) {
 		$(this).closest('tr').remove();
-	}
-
+	} */
+	
+	
 });
 
 // Auto-calculate totals when fields are changed

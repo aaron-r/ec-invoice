@@ -13,7 +13,8 @@ error_reporting(0);
 // TO-DO LIST
 // ----------
 // . Add prompt to select client when first opened. Quick static tutorial.
-// . Footer: [Customer Name - X invoices worth Z amount] > [E-mail | Print] / Submit		- Live status bar. Fade in/out for new customer selected.
+// . Left Footer: [Customer Name - X invoices worth Z amount] > [E-mail | Print] / Submit		- Live status bar. Fade in/out for new customer selected.
+// . Centre Footer: This client doesn't have an e-mail address. Prompt to add one via ODBC.
 
 $DatabaseHost 		= 'localhost';
 $DatabaseName 		= 'echips_v2';
@@ -72,6 +73,19 @@ function GetJobDetails(cardid) {
 
 };
 
+function SubmitInvoice() {
+	
+	// $("#DisplayJobDetails td").live('click', function() {
+		// var tmp2 = $(this).attr('id');
+		// alert(tmp2);
+	// });
+	
+	$("#DisplayJobDetails").on("load", function() {
+		alert("butts");
+	});
+	
+}
+
 </script>
 
 <div class="ClientSummary">
@@ -101,6 +115,8 @@ foreach($CardID as $value) {
 </div>
 
 <div id="ClientFooter">
+
+<h2 onclick="SubmitInvoice();">Submit Invoices!</h2>
 
 </div>
 
