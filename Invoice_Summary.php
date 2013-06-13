@@ -15,6 +15,13 @@ error_reporting(0);
 // . Add prompt to select client when first opened. Quick static tutorial.
 // . Left Footer: [Customer Name - X invoices worth Z amount] > [E-mail | Print] / Submit		- Live status bar. Fade in/out for new customer selected.
 // . Centre Footer: This client doesn't have an e-mail address. Prompt to add one via ODBC.
+// . Combine above two in to one? Really need dynamic price update? eh...
+
+// . -------------------------MYOB---------------------------
+// . Submit one job to MYOB - return invoice number
+// . Submit multiple jobs to MYOB - return invoice number
+// . Auto e-mail from MYOB
+// . Auto print from MYOB
 
 $DatabaseHost 		= 'localhost';
 $DatabaseName 		= 'echips_v2';
@@ -76,31 +83,74 @@ function GetJobDetails(cardid) {
 function SubmitInvoice() {
 	
 	$('#ClientDetail').ready(function() {
-		//alert('foobar');
-		//var tmp2 = $('td#JobNotes_21877').html();
-		//alert(tmp2);
 		
 		$('input[type=checkbox]:checked').each(function() {
 			var JobNumber = $(this).val();
 			
+			var MYOBJobTitle = $('span#JobTitle_' + JobNumber).html();
+			
+			// Submit Initial Job Number & Title
+			$.ajax({
+					url: "wip/myob_test.php",
+					type: "POST",
+					data: {
+					'ItemNumber' : 'Service',
+					'Description' : MYOBJobTitle
+					},
+					success: function(data) {
+					$('#ClientFooter').append(data);
+				}
+				});
+			
 			$('td#JobNotes_' + JobNumber).each(function() {
-				// split each line
-				// check each line for character length
+			
+				var MYOBQuantity = $('input#JobQty_' + JobNumber).val();
+				var MYOBItemNumber = $('input#JobCode_' + JobNumber).val();
+				var MYOBIncTaxTotal = $('input#JobLineTotal_' + JobNumber).val();
+			
+				var WholeText = $(this).html();
+				var EachTextLine = WholeText.split('\n');
 				
-				var text = $(this).html();
-				var eachLine = text.split('<br>');
+				var n;
+				for (n = 0; n < EachTextLine.length; ++n) {
 				
-				//alert( eachLine[1].text() );
-				alert(eachLine[0]);
-				alert('Lines found: '+ eachLine.length);
+					if (EachTextLine[n].length > 255) {
+						$('td#JobNotes_' + JobNumber).addClass("LengthExceeded");
+					}
+					
+				var MYOBDescription = EachTextLine[n];
+				
+				// Loop through all notes
+				$.ajax({
+					url: "wip/myob_test.php",
+					type: "POST",
+					data: {
+					'Quantity' : MYOBQuantity,
+					'ItemNumber' : MYOBItemNumber,
+					'IncTaxTotal' : MYOBIncTaxTotal,
+					'Description' : MYOBDescription
+					},
+					success: function(data) {
+					$('#ClientFooter').append(data);
+				}
+				});
+				
+				// Get final total here?
+				
+				}
+				
 			});
 			
 		});
 		
-		// for each checkbox that IS checked - serialize?
-		// get job notes, check for 255 characters and newline
-		// also get qty,code,unit price,line total
-		// finally get total of current job
+		// 1. Get Job Title *
+		// 2. Get Qty, Code, Notes (each line), Line Total
+		// 3. If same code and new line, change code to 'Service'
+		// 4. Get Final Total
+		
+		// 1a. Initial Stage 						<-----
+		// 2a. Loop through rest of stages.				 '
+		// Has to repeat this for EACH table/checkbox ----
 	});
 
 }
@@ -127,12 +177,15 @@ foreach($CardID as $value) {
 ?>
 
 </table>
+
 </div>
 
 <div id="ClientDetail"></div>
 
-<div id="ClientFooter">
 <h2 onclick="SubmitInvoice();">Submit Invoices!</h2>
+
+<div id="ClientFooter">
+<b>AJAX results go here:</b><br>
 </div>
 
 </body>

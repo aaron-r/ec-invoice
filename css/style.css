@@ -6,7 +6,7 @@
 
 .ClientSummary {
 	height: 90%;
-	width: 30%;
+	width: 500px;
 	overflow-x: hidden;
 	overflow-y: scroll;
 	float: left;
@@ -49,10 +49,14 @@ tr#JobList:hover {
 	padding-left: 10px;
 }
 
+.LengthExceeded {
+	background-color: rgb(245,100,100);
+}
+
 /* 	Invoice_Detail.php  */
 
 #ClientDetail {
-	width: 69%;
+	width: 1130px;
 	height: 90%;
 	float: left;
 	overflow-x: hidden;
@@ -87,6 +91,11 @@ td.JobTech {
 [id^="JobTable"] tr td {
 	font-size: 14px;
 	vertical-align: text-top;
+}
+
+[id^="JobTitle"] {
+	font-weight: bold;
+	
 }
 
 [id^="JobCode"] {
@@ -156,7 +165,7 @@ td[id^="JobNotes"] {
 	border-style: none		!important;
 	padding-left: 5px;
 	margin-top: 5px;
-	/* visibility: hidden;  fix later */
+	/* visibility: hidden; */
 }
 
 .AddRow, .DeleteRow {

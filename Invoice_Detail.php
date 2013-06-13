@@ -15,26 +15,8 @@ error_reporting(0);
 
 // TO-DO LIST
 // ----------
-// . Gather job info, line-by-line for jobs that are TICKED. (Check 255 characters)			
 // . When deleting rows - ensure Prompt only appears ONCE and WORKS.
-// . change total when row is deleted (subtract)
-
-// . -------------------------MYOB---------------------------
-// . Submit one job to MYOB - return invoice number
-// . Submit multiple jobs to MYOB - return invoice number
-// . Error-check: if item does not exist in MYOB
-// . Error check: if line exceeds 255 characters
-// . Auto e-mail from MYOB
-// . Auto print from MYOB
-
-// . ------------------------COSMETIC-------------------------
-// . Deleting rows: make sure you're unable to delete LAST <tr> - basically put in blank <tr> instead.
-//	 		- (If last row, just call AddRow for another? Need this to NOT break the exisiting table!)
-// . Have [+/-] buttons be immediantly invisible when a new customer is selected.
-// . Place a $ sign in front of Unit Price and Line Total.
-// . Move Job Title up 5-10px.
-// . Input boxes - remove styling to appear like plain text.
-// . Do a "known issues/planned features" within README + changelog/inital release
+// . Change total when row is deleted (subtract)
 
 date_default_timezone_set('Australia/Perth');
 
@@ -138,7 +120,7 @@ function AddRow(EditJobNumber) {
 	$("#JobTable_" + EditJobNumber).last().append(AddRowString);
 	
 	$('td#JobNotes_' + EditJobNumber).editable({
-		lineBreaks: true,
+		lineBreaks: false,
 	});
 	
 	$('[id^="JobQty"]').numeric();
@@ -211,7 +193,7 @@ foreach($JobNumber as $value) {
 		
 		echo '<tr id="JobHeader" class="">';
 		echo '<td colspan=5> <input id="JobChecked_'. $value .'" type=checkbox checked value='.$value.'> 
-		<b>&nbsp;Job #'.$JobNumber[$CounterDisplay] .' - '. $JobTitle[$CounterDisplay] . $DisplayJobDate .'</b> </td>';
+		<span id="JobTitle_'. $value .'">Job #'.$JobNumber[$CounterDisplay] .' - '. $JobTitle[$CounterDisplay] . $DisplayJobDate .'</span> </td>';
 		echo '<td> <img id="EditJobHeader" src="img/EditIcon.png" class='.$value.'> </td>';
 		echo '</tr>';
 		
@@ -250,7 +232,7 @@ foreach($JobNumber as $value) {
 		echo '<td class="JobTech" bgcolor='.$TechColour[$CounterDisplay].'>'. $Tech[$CounterDisplay] .'</td>';
 		echo '<td> <input id="JobQty_'. $value .'" value='. $JobQty[$CounterDisplay] .' class="EditJobContents" disabled=true> </td>';
 		echo '<td> <input id="JobCode_'. $value .'" value='. $JobCode[$CounterDisplay] .' class="EditJobContents" disabled=true> </td>';
-		echo '<td id="JobNotes_'. $value .'" class="EditJobContents">'. $JobNotes[$CounterDisplay] .'</td>';
+		echo '<td id="JobNotes_'. $value .'" class="EditJobContents"> '. $JobNotes[$CounterDisplay] .' </td>';
 		echo '<td> <input id="JobUnitPrice_'. $value .'" value='. number_format($JobPrice[$CounterDisplay], 2) .' class="EditJobContents" disabled=true> </td>';
 		echo '<td> <input id="JobLineTotal_'. $value .'" value='. $LineTotal .' class="EditJobContents" disabled=true> </td>';
 		echo '<td class="EditRow_'. $value .'"> <img src="img/DeleteRow.png" class="DeleteRow"> </td>';
@@ -267,8 +249,9 @@ foreach($JobNumber as $value) {
 					<div id="DisplayJobLabel"> Total: </div> 
 					<div id="DisplayJobTotal"> <span id="EditTotal_'. $value .'"> '. $JobTotal .' </span> </div>
 				</div>';
-				
+
 		$JobTotal = 0;
+		
 	}
 
 }

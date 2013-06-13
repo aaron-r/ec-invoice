@@ -1,6 +1,17 @@
-<h2>Features</h2>
+<h2>Version History</h2>
 
-* Programatically imports data in to MYOB!
-* Single page application - no need to refresh page!
-* Live editable data, automatically updates!
-* Fancy animations and more!
+Waiting for initial release!
+
+<h2>Known Issues</h2>
+
+* When all rows are deleted in a table, the table formatting breaks.
+* The add/remove row icons fade-out when a client is selected. They should start off invisible.
+* Unit Price and Line Total fields do not have dollar signs before their totals.
+* Job Title positioning is not ideal. Could be placed upwards ~5-10px.
+* Input boxes still have default styling. Remove this styling to fit theme of other elements.
+* Entire job is highlighted red if one line exceeds 255 characters. The single line should be highlighted instead.
+
+<h2>Planned Features</h2>
+
+* Ability to select/type specific item code within Code field. 	(Unable to implement until inventory is complete)
+* Ability to error-check avaliable item quantity and codes. 	(Unable to implement until inventory is complete)
