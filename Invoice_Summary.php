@@ -55,7 +55,7 @@ $(document).ready(function() {
 		$(this).addClass("HighlightJob");
 	});
 	
-	$('#DisplayJobDetails').html('<img src="http://erroraccessdenied.com/files/images/iamnotgoodwithcomputer.jpeg" alt="Placeholder for instructions">');
+	$('#ClientDetail').html('<img src="http://erroraccessdenied.com/files/images/iamnotgoodwithcomputer.jpeg" alt="Placeholder for instructions">');
 	
 });
 
@@ -67,7 +67,7 @@ function GetJobDetails(cardid) {
 		type: "POST",
 		data: {input : cardid},
 		success: function(data) {
-			$('#DisplayJobDetails').html(data);
+			$('#ClientDetail').html(data);
 		}
 	});
 
@@ -75,15 +75,34 @@ function GetJobDetails(cardid) {
 
 function SubmitInvoice() {
 	
-	// $("#DisplayJobDetails td").live('click', function() {
-		// var tmp2 = $(this).attr('id');
-		// alert(tmp2);
-	// });
-	
-	$("#DisplayJobDetails").on("load", function() {
-		alert("butts");
+	$('#ClientDetail').ready(function() {
+		//alert('foobar');
+		//var tmp2 = $('td#JobNotes_21877').html();
+		//alert(tmp2);
+		
+		$('input[type=checkbox]:checked').each(function() {
+			var JobNumber = $(this).val();
+			
+			$('td#JobNotes_' + JobNumber).each(function() {
+				// split each line
+				// check each line for character length
+				
+				var text = $(this).html();
+				var eachLine = text.split('<br>');
+				
+				//alert( eachLine[1].text() );
+				alert(eachLine[0]);
+				alert('Lines found: '+ eachLine.length);
+			});
+			
+		});
+		
+		// for each checkbox that IS checked - serialize?
+		// get job notes, check for 255 characters and newline
+		// also get qty,code,unit price,line total
+		// finally get total of current job
 	});
-	
+
 }
 
 </script>
@@ -110,14 +129,10 @@ foreach($CardID as $value) {
 </table>
 </div>
 
-<div id="ClientDetail">
-<span id="DisplayJobDetails"></span>
-</div>
+<div id="ClientDetail"></div>
 
 <div id="ClientFooter">
-
 <h2 onclick="SubmitInvoice();">Submit Invoices!</h2>
-
 </div>
 
 </body>

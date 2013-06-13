@@ -16,7 +16,7 @@ error_reporting(0);
 // TO-DO LIST
 // ----------
 // . Gather job info, line-by-line for jobs that are TICKED. (Check 255 characters)			
-// . When deleting rows - ensure Prompt only appears ONCE.
+// . When deleting rows - ensure Prompt only appears ONCE and WORKS.
 // . change total when row is deleted (subtract)
 
 // . -------------------------MYOB---------------------------
@@ -34,6 +34,7 @@ error_reporting(0);
 // . Place a $ sign in front of Unit Price and Line Total.
 // . Move Job Title up 5-10px.
 // . Input boxes - remove styling to appear like plain text.
+// . Do a "known issues/planned features" within README + changelog/inital release
 
 date_default_timezone_set('Australia/Perth');
 
@@ -96,7 +97,7 @@ $('img#EditJobHeader').click(function() {
 	$(".EditRow_" + EditJobNumber).fadeIn(1000);
 
 	$('td#JobNotes_' + EditJobNumber).editable({
-		lineBreaks: true,
+		lineBreaks: false,
 	});
 
 	$('input#JobQty_' + EditJobNumber).prop("disabled", false);
@@ -209,7 +210,7 @@ foreach($JobNumber as $value) {
 		echo '<table id="JobTable_'. $value .'">';
 		
 		echo '<tr id="JobHeader" class="">';
-		echo '<td colspan=5> <input type=checkbox checked value='.$value.'> 
+		echo '<td colspan=5> <input id="JobChecked_'. $value .'" type=checkbox checked value='.$value.'> 
 		<b>&nbsp;Job #'.$JobNumber[$CounterDisplay] .' - '. $JobTitle[$CounterDisplay] . $DisplayJobDate .'</b> </td>';
 		echo '<td> <img id="EditJobHeader" src="img/EditIcon.png" class='.$value.'> </td>';
 		echo '</tr>';
@@ -229,7 +230,7 @@ foreach($JobNumber as $value) {
 		echo '<td class="JobTech" bgcolor='.$TechColour[$CounterDisplay].'>'. $Tech[$CounterDisplay] .'</td>';
 		echo '<td> <input id="JobQty_'. $value .'" value='. $JobQty[$CounterDisplay] .' class="EditJobContents" disabled=true> </td>';
 		echo '<td> <input id="JobCode_'. $value .'" value='. $JobCode[$CounterDisplay] .' class="EditJobContents" disabled=true> </td>';
-		echo '<td id="JobNotes_'. $value .'">'. htmlentities($JobNotes[$CounterDisplay]) .'</td>';
+		echo '<td id="JobNotes_'. $value .'">'. $JobNotes[$CounterDisplay] .'</td>';
 		echo '<td> <input id="JobUnitPrice_'. $value .'" value='. number_format($JobPrice[$CounterDisplay], 2) .' class="EditJobContents" disabled=true> </td>';
 		echo '<td> <input id="JobLineTotal_'. $value .'" value='. $LineTotal .' class="EditJobContents" disabled=true> </td>';
 		echo '<td class="EditRow_'. $value .'"> <img src="img/DeleteRow.png" class="DeleteRow"> </td>';
@@ -249,7 +250,7 @@ foreach($JobNumber as $value) {
 		echo '<td class="JobTech" bgcolor='.$TechColour[$CounterDisplay].'>'. $Tech[$CounterDisplay] .'</td>';
 		echo '<td> <input id="JobQty_'. $value .'" value='. $JobQty[$CounterDisplay] .' class="EditJobContents" disabled=true> </td>';
 		echo '<td> <input id="JobCode_'. $value .'" value='. $JobCode[$CounterDisplay] .' class="EditJobContents" disabled=true> </td>';
-		echo '<td id="JobNotes_'. $value .'" class="EditJobContents">'. htmlentities($JobNotes[$CounterDisplay]) .'</td>';
+		echo '<td id="JobNotes_'. $value .'" class="EditJobContents">'. $JobNotes[$CounterDisplay] .'</td>';
 		echo '<td> <input id="JobUnitPrice_'. $value .'" value='. number_format($JobPrice[$CounterDisplay], 2) .' class="EditJobContents" disabled=true> </td>';
 		echo '<td> <input id="JobLineTotal_'. $value .'" value='. $LineTotal .' class="EditJobContents" disabled=true> </td>';
 		echo '<td class="EditRow_'. $value .'"> <img src="img/DeleteRow.png" class="DeleteRow"> </td>';
