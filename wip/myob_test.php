@@ -5,13 +5,11 @@ $ItemNumber = $_POST['ItemNumber'];
 //$DeliveryStatus = "P";
 $Quantity = $_POST['Quantity'];							
 $Description = $_POST['Description'];
-//$ExTaxTotal = 95.00;
+$ExTaxTotal = $_POST['ExTaxTotal'];
 $IncTaxTotal = $_POST['IncTaxTotal'];						
 //$CardID = "CUS000001";
 
-echo $Quantity .'<br>';
-echo $ItemNumber .'<br>';
-echo $Description .'<br>';
-echo $IncTaxTotal .'<br>';
+echo '['. $Quantity . '] - ' . $ItemNumber . ' - <i> ' . $Description . ' </i> - (' . $ExTaxTotal . ') (' . $IncTaxTotal . ') <br>';
+echo '<p>';
 
 ?>

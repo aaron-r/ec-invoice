@@ -8,14 +8,12 @@
 
 <?
 
-error_reporting(0);
-
 // TO-DO LIST
 // ----------
 // . Add prompt to select client when first opened. Quick static tutorial.
 // . Left Footer: [Customer Name - X invoices worth Z amount] > [E-mail | Print] / Submit		- Live status bar. Fade in/out for new customer selected.
 // . Centre Footer: This client doesn't have an e-mail address. Prompt to add one via ODBC.
-// . Combine above two in to one? Really need dynamic price update? eh...
+// . Combine above two in to one? Does it really need dynamic price update???
 
 // . -------------------------MYOB---------------------------
 // . Submit one job to MYOB - return invoice number
@@ -85,8 +83,8 @@ function SubmitInvoice() {
 	$('#ClientDetail').ready(function() {
 		
 		$('input[type=checkbox]:checked').each(function() {
+		
 			var JobNumber = $(this).val();
-			
 			var MYOBJobTitle = $('span#JobTitle_' + JobNumber).html();
 			
 			// Submit Initial Job Number & Title
@@ -94,8 +92,10 @@ function SubmitInvoice() {
 					url: "wip/myob_test.php",
 					type: "POST",
 					data: {
-					'ItemNumber' : 'Service',
-					'Description' : MYOBJobTitle
+					'Quantity' : '1',
+					'ItemNumber' : 'title',
+					'Description' : '<b>' + MYOBJobTitle + '</b>',
+					'IncTaxTotal' : ''
 					},
 					success: function(data) {
 					$('#ClientFooter').append(data);
@@ -103,38 +103,53 @@ function SubmitInvoice() {
 				});
 			
 			$('td#JobNotes_' + JobNumber).each(function() {
-			
-				var MYOBQuantity = $('input#JobQty_' + JobNumber).val();
-				var MYOBItemNumber = $('input#JobCode_' + JobNumber).val();
+
+				var MYOBQuantity 	= $('input#JobQty_' + JobNumber).val();
+				var MYOBItemNumber 	= $('input#JobCode_' + JobNumber).val();
 				var MYOBIncTaxTotal = $('input#JobLineTotal_' + JobNumber).val();
-			
+				
 				var WholeText = $(this).html();
-				var EachTextLine = WholeText.split('\n');
+				var MYOBDescription = WholeText.split('\n');
 				
 				var n;
-				for (n = 0; n < EachTextLine.length; ++n) {
+				for (n = 0; n < MYOBDescription.length; n++) {
 				
-					if (EachTextLine[n].length > 255) {
+					if (MYOBDescription[n].length > 255) {
 						$('td#JobNotes_' + JobNumber).addClass("LengthExceeded");
 					}
 					
-				var MYOBDescription = EachTextLine[n];
-				
-				// Loop through all notes
-				$.ajax({
-					url: "wip/myob_test.php",
-					type: "POST",
-					data: {
-					'Quantity' : MYOBQuantity,
-					'ItemNumber' : MYOBItemNumber,
-					'IncTaxTotal' : MYOBIncTaxTotal,
-					'Description' : MYOBDescription
-					},
-					success: function(data) {
-					$('#ClientFooter').append(data);
+				var CheckJobCode = $('input#JobCode_' + JobNumber).val();
+					
+				// if STARTS WITH onsite or inshop *AND* if (n != 0) do:
+				if (n != 0) {
+					MYOBQuantity	= "1";
+					MYOBItemNumber	= "Service";
+					MYOBIncTaxTotal = "";
+				} else {
+					var MYOBQuantity 	= $('input#JobQty_' + JobNumber).val();
+					var MYOBItemNumber 	= $('input#JobCode_' + JobNumber).val();
+					var MYOBIncTaxTotal = $('input#JobLineTotal_' + JobNumber).val();
 				}
-				});
 				
+				if (MYOBDescription[n] != "") {
+
+					// Loop through all Job Notes
+					$.ajax({
+						url: "wip/myob_test.php",
+						type: "POST",
+						data: {
+						'Quantity' : MYOBQuantity,
+						'ItemNumber' : MYOBItemNumber,
+						'Description' : MYOBDescription[n],
+						'ExTaxTotal' : MYOBIncTaxTotal,
+						'IncTaxTotal' : n
+						},
+						success: function(data) {
+						$('#ClientFooter').append(data);
+					}
+					});
+				
+				 }
 				// Get final total here?
 				
 				}
@@ -144,7 +159,7 @@ function SubmitInvoice() {
 		});
 		
 		// 1. Get Job Title *
-		// 2. Get Qty, Code, Notes (each line), Line Total
+		// 2. Get Qty, Code, Notes (each line), Line Total *
 		// 3. If same code and new line, change code to 'Service'
 		// 4. Get Final Total
 		
@@ -182,7 +197,7 @@ foreach($CardID as $value) {
 
 <div id="ClientDetail"></div>
 
-<h2 onclick="SubmitInvoice();">Submit Invoices!</h2>
+<h2 onclick="SubmitInvoice();"><u>Submit Invoices!</u></h2>
 
 <div id="ClientFooter">
 <b>AJAX results go here:</b><br>

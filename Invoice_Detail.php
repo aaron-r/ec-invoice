@@ -11,12 +11,11 @@
 
 <?
 
-error_reporting(0);
-
 // TO-DO LIST
 // ----------
 // . When deleting rows - ensure Prompt only appears ONCE and WORKS.
 // . Change total when row is deleted (subtract)
+// . Create area for PO Number
 
 date_default_timezone_set('Australia/Perth');
 
