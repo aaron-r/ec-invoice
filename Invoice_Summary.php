@@ -79,85 +79,66 @@ function GetJobDetails(cardid) {
 };
 
 function SubmitInvoice() {
+
+var MYOBJobTitle = [];
+var MYOBQuantity = [];
+var MYOBItemNumber = [];
+var MYOBDescription = [];
+var MYOBExTaxTotal = [];
+var MYOBIncTaxTotal = [];
 	
 	$('#ClientDetail').ready(function() {
 		
 		$('input[type=checkbox]:checked').each(function() {
 		
 			var JobNumber = $(this).val();
-			var MYOBJobTitle = $('span#JobTitle_' + JobNumber).html();
-			
-			// Submit Initial Job Number & Title
-			$.ajax({
-					url: "wip/myob_test.php",
-					type: "POST",
-					data: {
-					'Quantity' : '1',
-					'ItemNumber' : 'title',
-					'Description' : '<b>' + MYOBJobTitle + '</b>',
-					'IncTaxTotal' : ''
-					},
-					success: function(data) {
-					$('#ClientFooter').append(data);
-				}
-				});
-			
-			$('td#JobNotes_' + JobNumber).each(function() {
+			MYOBJobTitle.push( $('span#JobTitle_' + JobNumber).html() );
 
-				var MYOBQuantity 	= $('input#JobQty_' + JobNumber).val();
-				var MYOBItemNumber 	= $('input#JobCode_' + JobNumber).val();
-				var MYOBIncTaxTotal = $('input#JobLineTotal_' + JobNumber).val();
+			$('td#JobNotes_' + JobNumber).each(function() {
 				
 				var WholeText = $(this).html();
-				var MYOBDescription = WholeText.split('\n');
+				var Description = WholeText.split('\n');
 				
 				var n;
-				for (n = 0; n < MYOBDescription.length; n++) {
+				for (n = 0; n < Description.length; n++) {
 				
-					if (MYOBDescription[n].length > 255) {
+					if (Description[n].length > 255) {
 						$('td#JobNotes_' + JobNumber).addClass("LengthExceeded");
 					}
 					
-				var CheckJobCode = $('input#JobCode_' + JobNumber).val();
+					var CheckJobCode = $('input#JobCode_' + JobNumber).val();
 					
-				// if STARTS WITH onsite or inshop *AND* if (n != 0) do:
-				if (n != 0) {
-					MYOBQuantity	= "1";
-					MYOBItemNumber	= "Service";
-					MYOBIncTaxTotal = "";
-				} else {
-					var MYOBQuantity 	= $('input#JobQty_' + JobNumber).val();
-					var MYOBItemNumber 	= $('input#JobCode_' + JobNumber).val();
-					var MYOBIncTaxTotal = $('input#JobLineTotal_' + JobNumber).val();
-				}
-				
-				if (MYOBDescription[n] != "") {
-
-					// Loop through all Job Notes
-					$.ajax({
-						url: "wip/myob_test.php",
-						type: "POST",
-						data: {
-						'Quantity' : MYOBQuantity,
-						'ItemNumber' : MYOBItemNumber,
-						'Description' : MYOBDescription[n],
-						'ExTaxTotal' : MYOBIncTaxTotal,
-						'IncTaxTotal' : n
-						},
-						success: function(data) {
-						$('#ClientFooter').append(data);
+					//if STARTS WITH onsite or inshop *AND* if (n != 0) do:
+					if (n != 0) {
+						MYOBQuantity.push("1");
+						MYOBItemNumber.push("Service");
+						MYOBIncTaxTotal.push("0");
+					} else {
+						MYOBQuantity.push( $('input#JobQty_' + JobNumber).val() );
+						MYOBItemNumber.push( $('input#JobCode_' + JobNumber).val() );
+						MYOBIncTaxTotal.push( $('input#JobLineTotal_' + JobNumber).val() );
 					}
-					});
-				
-				 }
-				// Get final total here?
-				
+					
+					if (Description[n] != "") {
+						MYOBDescription.push(Description[n]);
+					}	
 				}
-				
+
 			});
+
 			
 		});
 		
+	});
+	// Get final total here?
+	console.log(MYOBJobTitle);
+	console.log(MYOBQuantity);
+	console.log(MYOBItemNumber);
+	console.log(MYOBDescription);
+	console.log(MYOBExTaxTotal);
+	console.log(MYOBIncTaxTotal);
+}
+
 		// 1. Get Job Title *
 		// 2. Get Qty, Code, Notes (each line), Line Total *
 		// 3. If same code and new line, change code to 'Service'
@@ -166,9 +147,24 @@ function SubmitInvoice() {
 		// 1a. Initial Stage 						<-----
 		// 2a. Loop through rest of stages.				 '
 		// Has to repeat this for EACH table/checkbox ----
-	});
-
-}
+		
+		// AJAX query to be used later:
+		
+					// Loop through all Job Notes
+					// $.ajax({
+						// url: "wip/myob_test.php",
+						// type: "POST",
+						// data: {
+						// 'Quantity' : MYOBQuantity,
+						// 'ItemNumber' : MYOBItemNumber,
+						// 'Description' : Description[n],
+						// 'ExTaxTotal' : MYOBIncTaxTotal,
+						// 'IncTaxTotal' : n
+						// },
+						// success: function(data) {
+						// $('#ClientFooter').append(data);
+					// }
+					// });
 
 </script>
 
@@ -200,7 +196,7 @@ foreach($CardID as $value) {
 <h2 onclick="SubmitInvoice();"><u>Submit Invoices!</u></h2>
 
 <div id="ClientFooter">
-<b>AJAX results go here:</b><br>
+<b>AJAX results go here...</b><br>
 </div>
 
 </body>

@@ -27,7 +27,7 @@ $query .= ")";
 
 $desc = array("Found fake anti virus.","Ran Virus Scanner, removed 13 bad entries","Updates all OK!");
 
-$i = 1;
+$i = 1;		// NOT NEEDED - for test purposes only
 $a = 1;
 
 echo $query.'<p>';
