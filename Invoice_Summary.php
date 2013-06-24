@@ -113,6 +113,14 @@ var MYOBIncTaxTotal = [];
 						MYOBQuantity.push("1");
 						MYOBItemNumber.push("Service");
 						MYOBIncTaxTotal.push("0");
+						alert("assfuck");
+						
+						if (CheckJobCode.substring(0, 5) == "onsite") {
+							MYOBQuantity.push("1");
+							MYOBItemNumber.push("Service");
+							MYOBIncTaxTotal.push("0");
+							alert("foobar");
+						}
 					} else {
 						MYOBQuantity.push( $('input#JobQty_' + JobNumber).val() );
 						MYOBItemNumber.push( $('input#JobCode_' + JobNumber).val() );
@@ -126,7 +134,6 @@ var MYOBIncTaxTotal = [];
 
 			});
 
-			
 		});
 		
 	});
