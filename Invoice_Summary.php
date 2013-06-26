@@ -3,23 +3,18 @@
 <link rel="stylesheet" type="text/css" href="css/style.css">
 <script src="js/jquery.min.js"></script>
 </head>
-
+<title>Efficient Chips</title>
 <body>
 
 <?
 
 // TO-DO LIST
 // ----------
-// . Add prompt to select client when first opened. Quick static tutorial.
-// . Left Footer: [Customer Name - X invoices worth Z amount] > [E-mail | Print] / Submit		- Live status bar. Fade in/out for new customer selected.
-// . Centre Footer: This client doesn't have an e-mail address. Prompt to add one via ODBC.
-// . Combine above two in to one? Does it really need dynamic price update???
+// . Submit button is invisible until a client is selected
 
 // . -------------------------MYOB---------------------------
 // . Submit one job to MYOB - return invoice number
 // . Submit multiple jobs to MYOB - return invoice number
-// . Auto e-mail from MYOB
-// . Auto print from MYOB
 
 $DatabaseHost 		= 'localhost';
 $DatabaseName 		= 'echips_v2';
@@ -80,7 +75,6 @@ function GetJobDetails(cardid) {
 
 function SubmitInvoice() {
 
-var MYOBJobTitle = [];
 var MYOBQuantity = [];
 var MYOBItemNumber = [];
 var MYOBDescription = [];
@@ -92,7 +86,11 @@ var MYOBIncTaxTotal = [];
 		$('input[type=checkbox]:checked').each(function() {
 		
 			var JobNumber = $(this).val();
-			MYOBJobTitle.push( $('span#JobTitle_' + JobNumber).html() );
+			MYOBDescription.push( $('span#JobTitle_' + JobNumber).html() );
+			MYOBQuantity.push("1");
+			MYOBItemNumber.push("misc");
+			MYOBExTaxTotal.push("0");
+			MYOBIncTaxTotal.push("0");
 
 			$('td#JobNotes_' + JobNumber).each(function() {
 				
@@ -105,73 +103,66 @@ var MYOBIncTaxTotal = [];
 					if (Description[n].length > 255) {
 						$('td#JobNotes_' + JobNumber).addClass("LengthExceeded");
 					}
+
+					var CheckJobCode = $(this).closest('tr').find("input[id^=JobCode]").val();
 					
-					var CheckJobCode = $('input#JobCode_' + JobNumber).val();
-					
-					//if STARTS WITH onsite or inshop *AND* if (n != 0) do:
 					if (n != 0) {
-						MYOBQuantity.push("1");
-						MYOBItemNumber.push("Service");
-						MYOBIncTaxTotal.push("0");
-						alert("assfuck");
-						
-						if (CheckJobCode.substring(0, 5) == "onsite") {
+						if (CheckJobCode.substring(0, 6) == "onsite" || CheckJobCode.substring(0, 6) == "inshop") {
 							MYOBQuantity.push("1");
 							MYOBItemNumber.push("Service");
+							MYOBExTaxTotal.push("0");
 							MYOBIncTaxTotal.push("0");
-							alert("foobar");
 						}
 					} else {
-						MYOBQuantity.push( $('input#JobQty_' + JobNumber).val() );
-						MYOBItemNumber.push( $('input#JobCode_' + JobNumber).val() );
-						MYOBIncTaxTotal.push( $('input#JobLineTotal_' + JobNumber).val() );
+						MYOBQuantity.push( $(this).closest('tr').find("input[id^=JobQty]").val() );
+						MYOBItemNumber.push( $(this).closest('tr').find("input[id^=JobCode]").val() );
+						MYOBExTaxTotal.push("0");
+						MYOBIncTaxTotal.push( $(this).closest('tr').find("input[id^=JobLineTotal]").val() );
 					}
 					
 					if (Description[n] != "") {
 						MYOBDescription.push(Description[n]);
 					}	
 				}
-
+				
 			});
 
+			// Add blank-line between jobs
+			MYOBQuantity.push("1");
+			MYOBItemNumber.push("misc");
+			MYOBDescription.push("-----");
+			MYOBExTaxTotal.push("0");
+			MYOBIncTaxTotal.push("0");
+			
+			console.log(MYOBQuantity);
+			console.log(MYOBItemNumber);
+			console.log(MYOBDescription);
 		});
 		
 	});
-	// Get final total here?
-	console.log(MYOBJobTitle);
-	console.log(MYOBQuantity);
-	console.log(MYOBItemNumber);
-	console.log(MYOBDescription);
-	console.log(MYOBExTaxTotal);
-	console.log(MYOBIncTaxTotal);
-}
+	
+	// Submit array to be parsed for MYOB
+	$.ajax({
+	
+		url: "Submit_Invoice.php",
+		type: "POST",
+		data: {
+		'PONumber' : '123456',
+		'Quantity' : MYOBQuantity,
+		'ItemNumber' : MYOBItemNumber,
+		'DeliveryStatus' : 'P',			// 'P' (print) or 'E' (e-mail)
+		'Description' : MYOBDescription,
+		'ExTaxTotal' : MYOBExTaxTotal,
+		'IncTaxTotal' : MYOBIncTaxTotal,
+		'CardID' : 'CUS000001'
+		},
+		success: function(data) {
+		$('#ClientFooter').html(data);
+		}
+	
+	});
 
-		// 1. Get Job Title *
-		// 2. Get Qty, Code, Notes (each line), Line Total *
-		// 3. If same code and new line, change code to 'Service'
-		// 4. Get Final Total
-		
-		// 1a. Initial Stage 						<-----
-		// 2a. Loop through rest of stages.				 '
-		// Has to repeat this for EACH table/checkbox ----
-		
-		// AJAX query to be used later:
-		
-					// Loop through all Job Notes
-					// $.ajax({
-						// url: "wip/myob_test.php",
-						// type: "POST",
-						// data: {
-						// 'Quantity' : MYOBQuantity,
-						// 'ItemNumber' : MYOBItemNumber,
-						// 'Description' : Description[n],
-						// 'ExTaxTotal' : MYOBIncTaxTotal,
-						// 'IncTaxTotal' : n
-						// },
-						// success: function(data) {
-						// $('#ClientFooter').append(data);
-					// }
-					// });
+}
 
 </script>
 

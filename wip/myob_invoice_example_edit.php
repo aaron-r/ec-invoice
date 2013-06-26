@@ -9,7 +9,7 @@ $ItemNumber = "100";						// Changes
 $DeliveryStatus = "P";
 $Quantity = 1;								// Changes
 $Description = "Workshop Service Rate";		// Changes
-$ExTaxTotal = 95.00;
+$ExTaxTotal = 0.00;
 $IncTaxTotal = 0.00;						// Changes
 $CardID = "CUS000001";
 

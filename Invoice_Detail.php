@@ -6,7 +6,7 @@
 <script src="js/jquery.editable.min.js"></script>
 <script src="js/jquery.numeric.js"></script>
 </head>
-
+<title>Efficient Chips</title>
 <body>
 
 <?
@@ -16,6 +16,7 @@
 // . When deleting rows - ensure Prompt only appears ONCE and WORKS.
 // . Change total when row is deleted (subtract)
 // . Create area for PO Number
+// . Detect if it's a PART (ie: NOT onsite or inshop) and restrict editing that field to ONE LINE.
 
 date_default_timezone_set('Australia/Perth');
 
