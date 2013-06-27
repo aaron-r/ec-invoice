@@ -10,11 +10,14 @@
 
 // TO-DO LIST
 // ----------
-// . Submit button is invisible until a client is selected
+// . Return invoice number.
+// . Set invoice number against database and close job.
+// . Make sure TOTALS import correctly.
+// . Option to set Email or Print.
+// . Grab CardID for client selected.
+// . Grab PO Number - error check so that only ONE can be submitted at once.
 
-// . -------------------------MYOB---------------------------
-// . Submit one job to MYOB - return invoice number
-// . Submit multiple jobs to MYOB - return invoice number
+// . Add dark-grey bar at the bottom of the page. (COSMETIC)
 
 $DatabaseHost 		= 'localhost';
 $DatabaseName 		= 'echips_v2';
@@ -55,7 +58,7 @@ $(document).ready(function() {
 		$(this).addClass("HighlightJob");
 	});
 	
-	$('#ClientDetail').html('<img src="http://erroraccessdenied.com/files/images/iamnotgoodwithcomputer.jpeg" alt="Placeholder for instructions">');
+	$('#ClientDetail').html('<img src="img/CatPrompt.png" id="FirstPrompt">');
 	
 });
 
@@ -71,6 +74,8 @@ function GetJobDetails(cardid) {
 		}
 	});
 
+	$("#SubmitButton").css('visibility', 'visible');
+	
 };
 
 function SubmitInvoice() {
@@ -121,7 +126,7 @@ var MYOBIncTaxTotal = [];
 					}
 					
 					if (Description[n] != "") {
-						MYOBDescription.push(Description[n]);
+						MYOBDescription.push( Description[n].replace(/'/g,"''") );
 					}	
 				}
 				
@@ -130,7 +135,7 @@ var MYOBIncTaxTotal = [];
 			// Add blank-line between jobs
 			MYOBQuantity.push("1");
 			MYOBItemNumber.push("misc");
-			MYOBDescription.push("-----");
+			MYOBDescription.push("-");
 			MYOBExTaxTotal.push("0");
 			MYOBIncTaxTotal.push("0");
 			
@@ -147,17 +152,17 @@ var MYOBIncTaxTotal = [];
 		url: "Submit_Invoice.php",
 		type: "POST",
 		data: {
-		'PONumber' : '123456',
-		'Quantity' : MYOBQuantity,
-		'ItemNumber' : MYOBItemNumber,
-		'DeliveryStatus' : 'P',			// 'P' (print) or 'E' (e-mail)
-		'Description' : MYOBDescription,
-		'ExTaxTotal' : MYOBExTaxTotal,
-		'IncTaxTotal' : MYOBIncTaxTotal,
-		'CardID' : 'CUS000001'
+			'PONumber' : '123456',
+			'Quantity' : MYOBQuantity,
+			'ItemNumber' : MYOBItemNumber,
+			'DeliveryStatus' : 'E',			// 'P' (print) or 'E' (e-mail)
+			'Description' : MYOBDescription,
+			'ExTaxTotal' : MYOBExTaxTotal,
+			'IncTaxTotal' : MYOBIncTaxTotal,
+			'CardID' : 'CUS000001'
 		},
 		success: function(data) {
-		$('#ClientFooter').html(data);
+			$('#ClientFooter').html(data);
 		}
 	
 	});
@@ -191,10 +196,13 @@ foreach($CardID as $value) {
 
 <div id="ClientDetail"></div>
 
-<h2 onclick="SubmitInvoice();"><u>Submit Invoices!</u></h2>
+<div id="SubmitButton" style="visibility: hidden;">
+<button type="button" onclick="SubmitInvoice();">Submit Invoices</button>
+</div>
+
+<p>
 
 <div id="ClientFooter">
-<b>AJAX results go here...</b><br>
 </div>
 
 </body>

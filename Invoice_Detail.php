@@ -13,7 +13,7 @@
 
 // TO-DO LIST
 // ----------
-// . When deleting rows - ensure Prompt only appears ONCE and WORKS.
+// . Ensure deleting rows does not prompt you multiple times.
 // . Change total when row is deleted (subtract)
 // . Create area for PO Number
 // . Detect if it's a PART (ie: NOT onsite or inshop) and restrict editing that field to ONE LINE.
@@ -54,6 +54,7 @@ foreach($FirstQuery as $row) {
 	$TechColour[$CounterStart] 	= $row['staffcolor'];
 	$CounterStart++;
 }
+
 ?>
 
 <script>
@@ -97,14 +98,16 @@ $('img#EditJobHeader').click(function() {
 		
 	$(".EditRow_" + EditJobNumber).fadeOut(1000);
 	
-	} 
+	}
 
 });
 
 // Add new blank row to table
 function AddRow(EditJobNumber) {
 
+	$(".EditRow_" + EditJobNumber).css('display', 'table-cell');
 	$(".EditRow_" + EditJobNumber).css('visibility', 'visible');
+
 
 	var AddRowString = 
 	'  <tr id="JobBorder"> '
@@ -130,19 +133,19 @@ function AddRow(EditJobNumber) {
 };
 
 // Prompt and delete specific row
-$('.DeleteRow').click(function() {
+$('.DeleteRow').live('click', function(e) {
+
 	
-	alert("foobar");
-	
-	// * TO-DO: make sure confirm alert only appears ONCE
-	// * TO-DO: change total when row is deleted (subtract)
-	
-/* 	e.stopPropagation();
 	
 	if (confirm("Delete row?")) {
 		$(this).closest('tr').remove();
-	} */
-	
+		
+		var EditJobNumber = $(this).attr('id');
+		EditJobNumber = EditJobNumber.replace(/\D/g,'');	// Strip all non-numerical characters from string
+		var EditLineTotal = $(this).closest('tr').find("input[id^=JobLineTotal]").val();
+		
+		
+	}
 	
 });
 

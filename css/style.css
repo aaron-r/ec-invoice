@@ -2,7 +2,7 @@
 	font-family:"Calibri";
 }
 
-/*	Invoice-Summary.php  */
+/*	Invoice_Summary.php  */
 
 .ClientSummary {
 	height: 90%;
@@ -51,6 +51,26 @@ tr#JobList:hover {
 
 .LengthExceeded {
 	background-color: rgb(245,100,100);
+}
+
+#SubmitButton {
+	float: right;
+	padding-right: 70px;
+}
+
+#FirstPrompt {
+	display: block;
+	margin-left: auto;
+    margin-right: auto;
+	margin-top: 25%;
+}
+
+#FirstPrompt:hover {
+	background-image: url('img/CatPoint.png');
+}
+
+button {
+	font-size: 16px;
 }
 
 /* 	Invoice_Detail.php  */
