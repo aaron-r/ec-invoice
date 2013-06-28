@@ -13,7 +13,8 @@
 // . Return invoice number.
 // . Set invoice number against database and close job.
 // . Make sure TOTALS import correctly.
-// . Option to set Email or Print.
+
+// . Grab option to set Email or Print.
 // . Grab CardID for client selected.
 // . Grab PO Number - error check so that only ONE can be submitted at once.
 

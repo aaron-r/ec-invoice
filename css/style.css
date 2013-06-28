@@ -62,11 +62,7 @@ tr#JobList:hover {
 	display: block;
 	margin-left: auto;
     margin-right: auto;
-	margin-top: 25%;
-}
-
-#FirstPrompt:hover {
-	background-image: url('img/CatPoint.png');
+	margin-top: 30%;
 }
 
 button {

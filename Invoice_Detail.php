@@ -13,9 +13,8 @@
 
 // TO-DO LIST
 // ----------
-// . Ensure deleting rows does not prompt you multiple times.
-// . Change total when row is deleted (subtract)
-// . Create area for PO Number
+// . Ensure new rows are dynamically updated too.
+// . Create area for PO Number.
 // . Detect if it's a PART (ie: NOT onsite or inshop) and restrict editing that field to ONE LINE.
 
 date_default_timezone_set('Australia/Perth');
@@ -65,6 +64,8 @@ $(document).ready(function() {
 	$('[id^="JobQty"]').numeric();
 	$('[id^="JobUnitPrice"]').numeric();
 	$('[id^="JobLineTotal"]').numeric();
+	
+
 });
 
 // Edit specific job table
@@ -115,9 +116,9 @@ function AddRow(EditJobNumber) {
 	+' <td> <input id="JobQty_'+EditJobNumber+'" class="EditJobContents"> </td>'
 	+' <td> <input id="JobCode_'+EditJobNumber+'" class="EditJobContents"> </td>'
 	+' <td id="JobNotes_'+EditJobNumber+'"></td>'
-	+' <td> <input id="JobUnitPrice_'+EditJobNumber+'" class="EditJobContents"> </td>'
-	+' <td> <input id="JobLineTotal_'+EditJobNumber+'" class="EditJobContents"> </td>'
-	+' <td class="EditRow_'+EditJobNumber+'"> <img src="img/DeleteRow.png" class="DeleteRow"> </td>'
+	+' <td> <input id="JobUnitPrice_'+EditJobNumber+'" class="EditJobContents" value="0.00"> </td>'
+	+' <td> <input id="JobLineTotal_'+EditJobNumber+'" class="EditJobContents" value="0.00"> </td>'
+	+' <td class="EditRow_'+EditJobNumber+'"> <img src="img/DeleteRow.png" class="DeleteRow" onclick="DeleteRow()"> </td>'
 	+' </tr>';
 	
 	$("#JobTable_" + EditJobNumber).last().append(AddRowString);
@@ -133,21 +134,25 @@ function AddRow(EditJobNumber) {
 };
 
 // Prompt and delete specific row
-$('.DeleteRow').live('click', function(e) {
-
-	
+function DeleteRow() {
 	
 	if (confirm("Delete row?")) {
-		$(this).closest('tr').remove();
-		
-		var EditJobNumber = $(this).attr('id');
-		EditJobNumber = EditJobNumber.replace(/\D/g,'');	// Strip all non-numerical characters from string
-		var EditLineTotal = $(this).closest('tr').find("input[id^=JobLineTotal]").val();
-		
-		
-	}
 	
-});
+		var EditJobNumber = $(event.target).parent().attr('class');
+		EditJobNumber = EditJobNumber.replace(/\D/g, '');	// Strip all non-numerical characters from string
+		var EditLineTotal = $(event.target).closest('tr').find("input[id^=JobLineTotal]").val();
+		
+		var EditJobTotal = $('span#EditTotal_' + EditJobNumber).html();
+		console.log(EditJobTotal);
+
+		EditJobTotal = parseInt(EditJobTotal) - parseInt(EditLineTotal);
+		$('#EditTotal_' + EditJobNumber).html(EditJobTotal.toFixed(2));
+		
+		$(event.target).closest('tr').remove();
+	} 
+
+}
+
 
 // Auto-calculate totals when fields are changed
 $('.EditJobContents').keyup(function() {
@@ -218,7 +223,7 @@ foreach($JobNumber as $value) {
 		echo '<td id="JobNotes_'. $value .'">'. $JobNotes[$CounterDisplay] .'</td>';
 		echo '<td> <input id="JobUnitPrice_'. $value .'" value='. number_format($JobPrice[$CounterDisplay], 2) .' class="EditJobContents" disabled=true> </td>';
 		echo '<td> <input id="JobLineTotal_'. $value .'" value='. $LineTotal .' class="EditJobContents" disabled=true> </td>';
-		echo '<td class="EditRow_'. $value .'"> <img src="img/DeleteRow.png" class="DeleteRow"> </td>';
+		echo '<td class="EditRow_'. $value .'"> <img src="img/DeleteRow.png" class="DeleteRow" onclick="DeleteRow()"> </td>';
 		echo '</tr>';
 		
 		$CounterDisplay++;
@@ -238,7 +243,7 @@ foreach($JobNumber as $value) {
 		echo '<td id="JobNotes_'. $value .'" class="EditJobContents"> '. $JobNotes[$CounterDisplay] .' </td>';
 		echo '<td> <input id="JobUnitPrice_'. $value .'" value='. number_format($JobPrice[$CounterDisplay], 2) .' class="EditJobContents" disabled=true> </td>';
 		echo '<td> <input id="JobLineTotal_'. $value .'" value='. $LineTotal .' class="EditJobContents" disabled=true> </td>';
-		echo '<td class="EditRow_'. $value .'"> <img src="img/DeleteRow.png" class="DeleteRow"> </td>';
+		echo '<td class="EditRow_'. $value .'"> <img src="img/DeleteRow.png" class="DeleteRow" onclick="DeleteRow()"> </td>';
 		echo '</tr>';
 		
 		$CounterDisplay++;
