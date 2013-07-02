@@ -18,8 +18,6 @@
 // . Grab CardID for client selected.
 // . Grab PO Number - error check so that only ONE can be submitted at once.
 
-// . Add dark-grey bar at the bottom of the page. (COSMETIC)
-
 $DatabaseHost 		= 'localhost';
 $DatabaseName 		= 'echips_v2';
 $DatabaseUser		= 'root';
@@ -197,13 +195,10 @@ foreach($CardID as $value) {
 
 <div id="ClientDetail"></div>
 
-<div id="SubmitButton" style="visibility: hidden;">
-<button type="button" onclick="SubmitInvoice();">Submit Invoices</button>
-</div>
-
-<p>
-
 <div id="ClientFooter">
+
+<span onclick="SubmitInvoice();" id="SubmitButton">Submit Invoices</button>
+
 </div>
 
 </body>

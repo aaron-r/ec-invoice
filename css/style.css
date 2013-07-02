@@ -11,6 +11,7 @@
 	overflow-y: scroll;
 	float: left;
 	font-size: 16px;
+	position: relative;
 }
 
 .HighlightJob {
@@ -53,16 +54,36 @@ tr#JobList:hover {
 	background-color: rgb(245,100,100);
 }
 
-#SubmitButton {
-	float: right;
-	padding-right: 70px;
-}
-
 #FirstPrompt {
 	display: block;
 	margin-left: auto;
     margin-right: auto;
 	margin-top: 30%;
+}
+
+#ClientFooter {
+	position: absolute;
+	bottom: 77px;
+	width: 1642px;
+	height: 40px;
+	background-color: rgb(105,105,105);
+	border-bottom-right-radius: 10px;
+	border-bottom-left-radius: 10px;
+}
+
+#SubmitButton {
+	font-size: 18px;
+	font-weight: bold;
+	color: rgb(220,220,220);
+	float: right;
+	padding-top: 8px;
+	padding-right: 50px;
+}
+
+#SubmitButton:hover {
+	color: white;
+	cursor: hand;
+	cursor: pointer;
 }
 
 button {
@@ -72,6 +93,7 @@ button {
 /* 	Invoice_Detail.php  */
 
 #ClientDetail {
+	position: relative;
 	width: 1130px;
 	height: 90%;
 	float: left;
@@ -150,6 +172,8 @@ td[id^="JobNotes"] {
 [id^="JobTable"] {
 	border: 1px;
 	border-collapse: collapse;
+	position: relative;
+	display: block;
 }
 
 [id^="EditTotal"] {
@@ -192,6 +216,5 @@ td[id^="JobNotes"] {
 .JobPONumber {
 	position: absolute;
 	width: 95px;
-	left: 1475px;
 	margin-top: -0.4px;
 }

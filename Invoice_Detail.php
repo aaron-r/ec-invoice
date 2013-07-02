@@ -5,15 +5,12 @@
 <script src="js/jquery-ui.min.js"></script>
 <script src="js/jquery.editable.min.js"></script>
 <script src="js/jquery.numeric.js"></script>
+<script src="js/jquery.watermark.min.js"></script>
 </head>
 <title>Efficient Chips</title>
 <body>
 
 <?
-
-// TO-DO LIST
-// ----------
-// . Create area for PO Number. (label before entering text)
 
 date_default_timezone_set('Australia/Perth');
 
@@ -62,6 +59,8 @@ $(document).ready(function() {
 	$('[id^="JobQty"]').numeric();
 	$('[id^="JobUnitPrice"]').numeric();
 	$('[id^="JobLineTotal"]').numeric();
+	
+	$(".JobPONumber").watermark(" PO Number...");
 	
 
 });

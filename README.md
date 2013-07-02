@@ -16,6 +16,12 @@ Waiting for initial release!
 
 * Restrict Part Code fields to only be editable up to one line.
 * Check if selected client has an e-mail address within MYOB. If not, prompt to add one.
+* Ability to submit multiple invoices with multiple PO numbers.
 * Dynamically updated footer which displays how many invoices are currently selected and what the total amount of these invoices are combined.
 * Ability to select/type specific item code within Code field. 	(Unable to implement until inventory is complete)
 * Ability to error-check avaliable item quantity and codes. 	(Unable to implement until inventory is complete)
+
+<h2>Limitations</h2>
+
+* Can only invoice one job per one PO number.
+* Can only invoice one client at one time.
