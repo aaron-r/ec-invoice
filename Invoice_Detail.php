@@ -13,9 +13,7 @@
 
 // TO-DO LIST
 // ----------
-// . Ensure new rows are dynamically updated too.
-// . Create area for PO Number.
-// . Detect if it's a PART (ie: NOT onsite or inshop) and restrict editing that field to ONE LINE.
+// . Create area for PO Number. (label before entering text)
 
 date_default_timezone_set('Australia/Perth');
 
@@ -153,9 +151,8 @@ function DeleteRow() {
 
 }
 
-
 // Auto-calculate totals when fields are changed
-$('.EditJobContents').keyup(function() {
+$('body').on('keyup', '.EditJobContents', function() {
 	
 	var FinalJobTotal = 0;
 
@@ -200,8 +197,9 @@ foreach($JobNumber as $value) {
 		echo '<table id="JobTable_'. $value .'">';
 		
 		echo '<tr id="JobHeader" class="">';
-		echo '<td colspan=5> <input id="JobChecked_'. $value .'" type=checkbox checked value='.$value.'> 
+		echo '<td colspan=4> <input id="JobChecked_'. $value .'" type=checkbox checked value='.$value.'> 
 		<span id="JobTitle_'. $value .'">Job #'.$JobNumber[$CounterDisplay] .' - '. $JobTitle[$CounterDisplay] . $DisplayJobDate .'</span> </td>';
+		echo '<td> <input id="JobPONumber_'. $value .'" class="JobPONumber"> </td>';
 		echo '<td> <img id="EditJobHeader" src="img/EditIcon.png" class='.$value.'> </td>';
 		echo '</tr>';
 		

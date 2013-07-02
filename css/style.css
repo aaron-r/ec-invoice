@@ -161,7 +161,7 @@ td[id^="JobNotes"] {
 }
 
 #DisplayJobLabel {
-	margin-left: 905px;
+	margin-left: 914px;
 	margin-right: 5px;
 	height: auto;
 	float: left;
@@ -169,12 +169,12 @@ td[id^="JobNotes"] {
 
 #DisplayJobTotal {
 	background-color: rgb(255,235,205);
-	width: 133px;
+	width: 120px;
 	height: auto;
 	float: left;
 	margin-bottom: 20px;
 	text-align: right;
-	padding-right: 5px;
+	padding-right: 8px;
 }
 
 [class^="EditRow"] {
@@ -187,4 +187,11 @@ td[id^="JobNotes"] {
 .AddRow, .DeleteRow {
 	cursor: hand;
 	cursor: pointer;
+}
+
+.JobPONumber {
+	position: absolute;
+	width: 95px;
+	left: 1475px;
+	margin-top: -0.4px;
 }
