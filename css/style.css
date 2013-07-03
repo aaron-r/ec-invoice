@@ -2,6 +2,8 @@
 	font-family:"Calibri";
 }
 
+/* CONVERT COLOURS TO HEX ACTUALLY + Flat UI */
+
 /*	Invoice_Summary.php  */
 
 .ClientSummary {
@@ -63,10 +65,10 @@ tr#JobList:hover {
 
 #ClientFooter {
 	position: absolute;
-	bottom: 77px;
+	bottom: 6.5%;
 	width: 1642px;
 	height: 40px;
-	background-color: rgb(105,105,105);
+	background-color: #2C3E50;
 	border-bottom-right-radius: 10px;
 	border-bottom-left-radius: 10px;
 }
@@ -74,7 +76,7 @@ tr#JobList:hover {
 #SubmitButton {
 	font-size: 18px;
 	font-weight: bold;
-	color: rgb(220,220,220);
+	color: #BDC3C7;
 	float: right;
 	padding-top: 8px;
 	padding-right: 50px;
@@ -84,6 +86,12 @@ tr#JobList:hover {
 	color: white;
 	cursor: hand;
 	cursor: pointer;
+}
+
+#SVGPrinter {
+	width: 32px;
+	height: 32px;
+	color: red;
 }
 
 button {

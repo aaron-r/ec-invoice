@@ -18,6 +18,8 @@
 // . Grab CardID for client selected.
 // . Grab PO Number - error check so that only ONE can be submitted at once.
 
+// . COMESTIC - checkboxes, scrollbars, etc - make custom (remove table lines except border?)
+
 $DatabaseHost 		= 'localhost';
 $DatabaseName 		= 'echips_v2';
 $DatabaseUser		= 'root';
@@ -196,6 +198,9 @@ foreach($CardID as $value) {
 <div id="ClientDetail"></div>
 
 <div id="ClientFooter">
+
+<img src="img\ModernUI\appbar.email.hardedge.svg" id="SVGEmail" />
+<img src="img\ModernUI\appbar.printer.svg" id="SVGPrinter" />
 
 <span onclick="SubmitInvoice();" id="SubmitButton">Submit Invoices</button>
 
