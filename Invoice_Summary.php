@@ -2,6 +2,8 @@
 <head>
 <link rel="stylesheet" type="text/css" href="css/style.css">
 <script src="js/jquery.min.js"></script>
+<script src="js/jquery.svg.js"></script>
+
 </head>
 <title>Efficient Chips</title>
 <body>
@@ -199,10 +201,10 @@ foreach($CardID as $value) {
 
 <div id="ClientFooter">
 
-<img src="img\ModernUI\appbar.email.hardedge.svg" id="SVGEmail" />
-<img src="img\ModernUI\appbar.printer.svg" id="SVGPrinter" />
+<img id="OptionPrinter" class="svg" src="img/ModernUI/appbar.printer.svg" />
+<img id="OptionEmail" class="svg" src="img/ModernUI/appbar.email.hardedge.svg" />
 
-<span onclick="SubmitInvoice();" id="SubmitButton">Submit Invoices</button>
+<span onclick="SubmitInvoice();" id="SubmitButton">SUBMIT INVOICES</button>
 
 </div>
 

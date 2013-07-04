@@ -8,16 +8,18 @@
 
 .ClientSummary {
 	height: 90%;
-	width: 500px;
+	width: 530px;
 	overflow-x: hidden;
 	overflow-y: scroll;
 	float: left;
-	font-size: 16px;
+	font-size: 14px;
 	position: relative;
+	text-transform: uppercase;
 }
 
 .HighlightJob {
-	background-color: rgb(123,204,120)	!important;
+	background-color: #34495E	!important;
+	color: #BDC3C7; 
 }
 
 .ClientTable {
@@ -25,7 +27,7 @@
 }
 
 .ClientTable tr:nth-child(odd) {
-    background-color: rgb(254,240,201);
+    background-color: #E6E6E6;
 }
 
 a {
@@ -34,7 +36,7 @@ a {
 }
 
 tr#JobList:hover {
-	background-color: rgb(207,207,236);
+	background-color: #95A5A6;
 	cursor: hand;
 	cursor: pointer;
 }
@@ -66,7 +68,7 @@ tr#JobList:hover {
 #ClientFooter {
 	position: absolute;
 	bottom: 6.5%;
-	width: 1642px;
+	width: 1660px;
 	height: 40px;
 	background-color: #2C3E50;
 	border-bottom-right-radius: 10px;
@@ -75,34 +77,40 @@ tr#JobList:hover {
 
 #SubmitButton {
 	font-size: 18px;
-	font-weight: bold;
 	color: #BDC3C7;
 	float: right;
 	padding-top: 8px;
 	padding-right: 50px;
+	font-weight: bold;
 }
 
 #SubmitButton:hover {
 	color: white;
 	cursor: hand;
 	cursor: pointer;
+	
 }
 
-#SVGPrinter {
-	width: 32px;
-	height: 32px;
-	color: red;
+#OptionEmail {
+	float: right;
+	margin-top: 12px;
+	margin-left: 1420px;
 }
 
-button {
-	font-size: 16px;
+.svg path {
+	fill: white;
 }
+
+.svg {
+	width: 36px;
+	height: 36px;
+}
+
 
 /* 	Invoice_Detail.php  */
 
 #ClientDetail {
-	position: relative;
-	width: 1130px;
+	width: 1120px;
 	height: 90%;
 	float: left;
 	overflow-x: hidden;
@@ -111,7 +119,7 @@ button {
 }
 
 #EditJobHeader {
-	float:right; 
+	float: right; 
 	padding-right: 3px;
 	padding-top: 2px;
 	cursor: hand;
@@ -119,7 +127,8 @@ button {
 }
 
 #JobHeader {
-	background-color: rgb(224,224,255);
+	background-color: #34495E;
+	color: #BDC3C7;
 }
 
 tr#JobBorder td {
@@ -140,19 +149,22 @@ td.JobTech {
 }
 
 [id^="JobTitle"] {
-	font-weight: bold;
-	
+	font-size: 16px;
+	text-transform: uppercase;
+	line-height: 24px;
 }
 
 [id^="JobCode"] {
 	width: 75px;
 	max-width: 75px;
 	word-wrap: normal;
+	border: 0px;
+	background: none;
 }
 
 td[id^="JobNotes"] {
-	width: 750px;
-	max-width: 750px;
+	width: 730px;
+	max-width: 730px;
 	white-space: pre-wrap;
 	word-wrap: normal;
 }
@@ -161,20 +173,24 @@ td[id^="JobNotes"] {
 	width: 60px;
 	max-width: 60px;
 	word-wrap: normal;
-/* 	border: 0px;
-	background: none; */
+	border: 0px;
+	background: none;
 }
 
 [id^="JobUnitPrice"] {
-	width: 65px;
+	width: 75px;
 	max-width: 60px;
 	word-wrap: normal;
+	border: 0px;
+	background: none;
 }
 
 [id^="JobLineTotal"] {
-	width: 65px;
+	width: 75px;
 	max-width: 60px;
 	word-wrap: normal;
+	border: 0px;
+	background: none;
 }
 
 [id^="JobTable"] {
@@ -193,15 +209,15 @@ td[id^="JobNotes"] {
 }
 
 #DisplayJobLabel {
-	margin-left: 914px;
+	margin-left: 855px;
 	margin-right: 5px;
 	height: auto;
 	float: left;
 }
 
 #DisplayJobTotal {
-	background-color: rgb(255,235,205);
-	width: 120px;
+	background-color: #95A5A6;
+	width: 149px;
 	height: auto;
 	float: left;
 	margin-bottom: 20px;
@@ -223,6 +239,7 @@ td[id^="JobNotes"] {
 
 .JobPONumber {
 	position: absolute;
-	width: 95px;
-	margin-top: -0.4px;
+	width: 105px;
+	margin-top: 4px;
+	border: 0;
 }

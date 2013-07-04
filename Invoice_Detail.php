@@ -6,11 +6,14 @@
 <script src="js/jquery.editable.min.js"></script>
 <script src="js/jquery.numeric.js"></script>
 <script src="js/jquery.watermark.min.js"></script>
+<script src="js/jquery.svg.js"></script>
 </head>
 <title>Efficient Chips</title>
 <body>
 
 <?
+
+// . Make Job Notes text grey instead of black when NOT editable
 
 date_default_timezone_set('Australia/Perth');
 
@@ -60,19 +63,21 @@ $(document).ready(function() {
 	$('[id^="JobUnitPrice"]').numeric();
 	$('[id^="JobLineTotal"]').numeric();
 	
-	$(".JobPONumber").watermark(" PO Number...");
+	$(".JobPONumber").watermark(" PO NUMBER...");
 	
 
 });
 
 // Edit specific job table
-$('img#EditJobHeader').click(function() {
+$('svg#EditJobHeader').click(function() {
 
 	var EditJobNumber = $(this).attr('class');
+	alert(EditJobNumber);
+	//EditJobNumber = EditJobNumber.replace(/\D/g, '');	// Strip all non-numerical characters from string
 	var IsJobEditable = $(this).closest('#JobHeader').attr('class');
 
 	$(this).closest('tr').toggleClass("IsEditable");
-	$(this).closest('tr').animate({"backgroundColor":"rgb(245,100,100)"}, 600);
+	$(this).closest('tr').animate({"backgroundColor":"#E74C3C"}, 600);
 	
 	$(".EditRow_" + EditJobNumber).css('visibility', 'visible');
 	$(".EditRow_" + EditJobNumber).fadeIn(1000);
@@ -88,7 +93,7 @@ $('img#EditJobHeader').click(function() {
 	
 	if (IsJobEditable == "IsEditable") {
 		$('td#JobNotes_' + EditJobNumber).editable('destroy');
-		$(this).closest('tr').animate({"backgroundColor":"rgb(224,224,255)"}, 400);
+		$(this).closest('tr').animate({"backgroundColor":"#34495E"}, 400);
 		$('input#JobQty_' + EditJobNumber).prop("disabled", true);
 		$('input#JobCode_' + EditJobNumber).prop("disabled", true);
 		$('input#JobUnitPrice_' + EditJobNumber).prop("disabled", true);
@@ -199,16 +204,16 @@ foreach($JobNumber as $value) {
 		echo '<td colspan=4> <input id="JobChecked_'. $value .'" type=checkbox checked value='.$value.'> 
 		<span id="JobTitle_'. $value .'">Job #'.$JobNumber[$CounterDisplay] .' - '. $JobTitle[$CounterDisplay] . $DisplayJobDate .'</span> </td>';
 		echo '<td> <input id="JobPONumber_'. $value .'" class="JobPONumber"> </td>';
-		echo '<td> <img id="EditJobHeader" src="img/EditIcon.png" class='.$value.'> </td>';
+		echo '<td> <img id="EditJobHeader" src="img/ModernUI/appbar.edit.svg" class="svg '.$value.' "> </td>';
 		echo '</tr>';
 		
 		echo '<tr id="JobBorder">
 			  <td id="JobTech" bgcolor='.$TechColour[$CounterDisplay].'>&nbsp;</td>
-			  <td id="JobQty">Qty</td>
-			  <td id="JobCode">Code</td>
-			  <td>Notes</td>
-			  <td>Unit Price</td>
-			  <td>Line Total</td>
+			  <td id="JobQty">QTY</td>
+			  <td id="JobCode">CODE</td>
+			  <td>NOTES</td>
+			  <td id="JobUnitPrice">UNIT PRICE</td>
+			  <td id="JobLineTotal">LINE TOTAL</td>
 			  <td class="EditRow_'. $value .'"> <img src="img/AddRow.png" class="AddRow" onclick="AddRow('. $value .')"> </td>
 			  </tr>';
 
@@ -251,7 +256,7 @@ foreach($JobNumber as $value) {
 		echo '</table>';
 		
 		echo '	<div id="DisplayJobWrapper">
-					<div id="DisplayJobLabel"> Total: </div> 
+					<div id="DisplayJobLabel"> TOTAL: </div> 
 					<div id="DisplayJobTotal"> <span id="EditTotal_'. $value .'"> '. $JobTotal .' </span> </div>
 				</div>';
 
