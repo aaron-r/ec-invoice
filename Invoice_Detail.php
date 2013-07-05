@@ -14,6 +14,8 @@
 <?
 
 // . Make Job Notes text grey instead of black when NOT editable
+// . Custom 'yes/no' prompt for deleting rows
+// . When hovering over icons - still be able to hover over TRANSPARENT parts of the image.
 
 date_default_timezone_set('Australia/Perth');
 
@@ -62,18 +64,16 @@ $(document).ready(function() {
 	$('[id^="JobQty"]').numeric();
 	$('[id^="JobUnitPrice"]').numeric();
 	$('[id^="JobLineTotal"]').numeric();
-	
 	$(".JobPONumber").watermark(" PO NUMBER...");
-	
 
 });
 
 // Edit specific job table
-$('svg#EditJobHeader').click(function() {
+$('body').on('click', 'svg#edit-job-header', function() {
 
 	var EditJobNumber = $(this).attr('class');
-	alert(EditJobNumber);
-	//EditJobNumber = EditJobNumber.replace(/\D/g, '');	// Strip all non-numerical characters from string
+	EditJobNumber = EditJobNumber.replace(/\D/g, '');	// Strip all non-numerical characters from string
+	
 	var IsJobEditable = $(this).closest('#JobHeader').attr('class');
 
 	$(this).closest('tr').toggleClass("IsEditable");
@@ -106,11 +106,13 @@ $('svg#EditJobHeader').click(function() {
 });
 
 // Add new blank row to table
-function AddRow(EditJobNumber) {
+$('body').on('click', 'svg#add-row', function() {
+
+	var EditJobNumber = $(this).attr('class');
+	EditJobNumber = EditJobNumber.replace(/\D/g, '');	// Strip all non-numerical characters from string
 
 	$(".EditRow_" + EditJobNumber).css('display', 'table-cell');
 	$(".EditRow_" + EditJobNumber).css('visibility', 'visible');
-
 
 	var AddRowString = 
 	'  <tr id="JobBorder"> '
@@ -120,7 +122,7 @@ function AddRow(EditJobNumber) {
 	+' <td id="JobNotes_'+EditJobNumber+'"></td>'
 	+' <td> <input id="JobUnitPrice_'+EditJobNumber+'" class="EditJobContents" value="0.00"> </td>'
 	+' <td> <input id="JobLineTotal_'+EditJobNumber+'" class="EditJobContents" value="0.00"> </td>'
-	+' <td class="EditRow_'+EditJobNumber+'"> <img src="img/DeleteRow.png" class="DeleteRow" onclick="DeleteRow()"> </td>'
+	+' <td class="EditRow_'+EditJobNumber+'"> <img src="img/ModernUI/edit-minus.svg" id="delete-row" class="svg" > </td>'
 	+' </tr>';
 	
 	$("#JobTable_" + EditJobNumber).last().append(AddRowString);
@@ -133,10 +135,10 @@ function AddRow(EditJobNumber) {
 	$('[id^="JobUnitPrice"]').numeric();
 	$('[id^="JobLineTotal"]').numeric();
 	
-};
+});
 
 // Prompt and delete specific row
-function DeleteRow() {
+$('body').on('click', 'svg#delete-row', function() {
 	
 	if (confirm("Delete row?")) {
 	
@@ -153,7 +155,7 @@ function DeleteRow() {
 		$(event.target).closest('tr').remove();
 	} 
 
-}
+});
 
 // Auto-calculate totals when fields are changed
 $('body').on('keyup', '.EditJobContents', function() {
@@ -204,7 +206,7 @@ foreach($JobNumber as $value) {
 		echo '<td colspan=4> <input id="JobChecked_'. $value .'" type=checkbox checked value='.$value.'> 
 		<span id="JobTitle_'. $value .'">Job #'.$JobNumber[$CounterDisplay] .' - '. $JobTitle[$CounterDisplay] . $DisplayJobDate .'</span> </td>';
 		echo '<td> <input id="JobPONumber_'. $value .'" class="JobPONumber"> </td>';
-		echo '<td> <img id="EditJobHeader" src="img/ModernUI/appbar.edit.svg" class="svg '.$value.' "> </td>';
+		echo '<td> <img id="edit-job-header" src="img/ModernUI/edit.svg" class="svg '.$value.' "> </td>';
 		echo '</tr>';
 		
 		echo '<tr id="JobBorder">
@@ -214,7 +216,7 @@ foreach($JobNumber as $value) {
 			  <td>NOTES</td>
 			  <td id="JobUnitPrice">UNIT PRICE</td>
 			  <td id="JobLineTotal">LINE TOTAL</td>
-			  <td class="EditRow_'. $value .'"> <img src="img/AddRow.png" class="AddRow" onclick="AddRow('. $value .')"> </td>
+			  <td class="EditRow_'. $value .'"> <img src="img/ModernUI/edit-add.svg" id="add-row" class="svg '. $value.' "> </td>
 			  </tr>';
 
 		// First job notes displayed
@@ -225,7 +227,7 @@ foreach($JobNumber as $value) {
 		echo '<td id="JobNotes_'. $value .'">'. $JobNotes[$CounterDisplay] .'</td>';
 		echo '<td> <input id="JobUnitPrice_'. $value .'" value='. number_format($JobPrice[$CounterDisplay], 2) .' class="EditJobContents" disabled=true> </td>';
 		echo '<td> <input id="JobLineTotal_'. $value .'" value='. $LineTotal .' class="EditJobContents" disabled=true> </td>';
-		echo '<td class="EditRow_'. $value .'"> <img src="img/DeleteRow.png" class="DeleteRow" onclick="DeleteRow()"> </td>';
+		echo '<td class="EditRow_'. $value .'"> <img src="img/ModernUI/edit-minus.svg" id="delete-row" class="svg"> </td>';
 		echo '</tr>';
 		
 		$CounterDisplay++;
@@ -245,7 +247,7 @@ foreach($JobNumber as $value) {
 		echo '<td id="JobNotes_'. $value .'" class="EditJobContents"> '. $JobNotes[$CounterDisplay] .' </td>';
 		echo '<td> <input id="JobUnitPrice_'. $value .'" value='. number_format($JobPrice[$CounterDisplay], 2) .' class="EditJobContents" disabled=true> </td>';
 		echo '<td> <input id="JobLineTotal_'. $value .'" value='. $LineTotal .' class="EditJobContents" disabled=true> </td>';
-		echo '<td class="EditRow_'. $value .'"> <img src="img/DeleteRow.png" class="DeleteRow" onclick="DeleteRow()"> </td>';
+		echo '<td class="EditRow_'. $value .'"> <img src="img/ModernUI/edit-minus.svg" id="delete-row" class="svg"> </td>';
 		echo '</tr>';
 		
 		$CounterDisplay++;

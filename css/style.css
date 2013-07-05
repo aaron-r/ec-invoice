@@ -58,17 +58,24 @@ tr#JobList:hover {
 	background-color: rgb(245,100,100);
 }
 
-#FirstPrompt {
+#first-prompt path {
+	fill: #696969;
+}
+
+#first-prompt {
 	display: block;
 	margin-left: auto;
     margin-right: auto;
-	margin-top: 30%;
+	margin-top: 25%;
+	
+	width: 225px;
+	height: 225px;
 }
 
 #ClientFooter {
 	position: absolute;
 	bottom: 6.5%;
-	width: 1660px;
+	width: 1635px;
 	height: 40px;
 	background-color: #2C3E50;
 	border-bottom-right-radius: 10px;
@@ -91,26 +98,43 @@ tr#JobList:hover {
 	
 }
 
-#OptionEmail {
-	float: right;
-	margin-top: 12px;
-	margin-left: 1420px;
+.footer-options path {
+	fill: #7F8285;
 }
 
-.svg path {
-	fill: white;
+.footer-options {
+	position: absolute;
+	width: 34px;
+	height: 34px;
+	top: 3px;
 }
 
-.svg {
-	width: 36px;
-	height: 36px;
+#option-print {
+	left: 1370px;
+
 }
 
+#option-email {
+	left: 1405px;
+
+}
+
+#option-print:hover path {
+	fill: #FFFFFF;
+	cursor: hand;
+	cursor: pointer;
+}
+
+#option-email:hover path {
+	fill: #FFFFFF;
+	cursor: hand;
+	cursor: pointer;
+}
 
 /* 	Invoice_Detail.php  */
 
 #ClientDetail {
-	width: 1120px;
+	width: 1095px;
 	height: 90%;
 	float: left;
 	overflow-x: hidden;
@@ -163,8 +187,8 @@ td.JobTech {
 }
 
 td[id^="JobNotes"] {
-	width: 730px;
-	max-width: 730px;
+	width: 710px;
+	max-width: 710px;
 	white-space: pre-wrap;
 	word-wrap: normal;
 }
@@ -209,7 +233,7 @@ td[id^="JobNotes"] {
 }
 
 #DisplayJobLabel {
-	margin-left: 855px;
+	margin-left: 835px;
 	margin-right: 5px;
 	height: auto;
 	float: left;
@@ -242,4 +266,44 @@ td[id^="JobNotes"] {
 	width: 105px;
 	margin-top: 4px;
 	border: 0;
+}
+
+#edit-job-header path {
+	fill: #BDC3C7;
+}
+
+#edit-job-header {
+	position: relative;
+	width: 16px;
+	height: 16px;
+	top: 2px;
+	left: 55px;
+}
+
+#edit-job-header:hover path {
+	fill: #FFFFFF;
+	cursor: hand;
+	cursor: pointer;
+}
+
+#add-row, #delete-row {
+	top: 2px;
+	width: 16px;
+	height: 16px;
+}
+
+#add-row path, #delete-row path {
+	fill: #BDC3C7;
+}
+
+#add-row:hover path {
+	fill: green;
+	cursor: hand;
+	cursor: pointer;
+}
+
+#delete-row:hover path {
+	fill: red;
+	cursor: hand;
+	cursor: pointer;
 }

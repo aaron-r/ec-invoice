@@ -61,9 +61,9 @@ $(document).ready(function() {
 		$(this).addClass("HighlightJob");
 	});
 	
-	$('#ClientDetail').html('<img src="img/CatPrompt.png" id="FirstPrompt">');
+	$('#ClientDetail').html('<img id="first-prompt" class="svg" src="img/ModernUI/book-empty.svg" />');
 	
-});
+});		// <img id="option-email" class="svg footer-options" src="img/ModernUI/email.svg" />
 
 // Display selected customer's invoices
 function GetJobDetails(cardid) {
@@ -201,8 +201,8 @@ foreach($CardID as $value) {
 
 <div id="ClientFooter">
 
-<img id="OptionPrinter" class="svg" src="img/ModernUI/appbar.printer.svg" />
-<img id="OptionEmail" class="svg" src="img/ModernUI/appbar.email.hardedge.svg" />
+<img id="option-print" class="svg footer-options" src="img/ModernUI/printer.svg" />
+<img id="option-email" class="svg footer-options" src="img/ModernUI/email.svg" />
 
 <span onclick="SubmitInvoice();" id="SubmitButton">SUBMIT INVOICES</button>
 
