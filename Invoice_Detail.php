@@ -13,10 +13,6 @@
 
 <?
 
-// . Make Job Notes text grey instead of black when NOT editable
-// . Custom 'yes/no' prompt for deleting rows
-// . When hovering over icons - still be able to hover over TRANSPARENT parts of the image.
-
 date_default_timezone_set('Australia/Perth');
 
 $DisplayCardID = $_POST['input'];
@@ -59,17 +55,17 @@ foreach($FirstQuery as $row) {
 <script>
 
 $(document).ready(function() {
+
 	$('#ClientDetail').animate({ scrollTop: 0 }, 'medium');		// Auto-scroll to top of page
-	$('[class^="EditRow"]').fadeOut(1000);
+	$('[class^="EditRow"]').css('visibility', 'hidden');
 	$('[id^="JobQty"]').numeric();
 	$('[id^="JobUnitPrice"]').numeric();
 	$('[id^="JobLineTotal"]').numeric();
 	$(".JobPONumber").watermark(" PO NUMBER...");
-
 });
 
 // Edit specific job table
-$('body').on('click', 'svg#edit-job-header', function() {
+$('tbody').on('click', 'svg#edit-job-header', function() {
 
 	var EditJobNumber = $(this).attr('class');
 	EditJobNumber = EditJobNumber.replace(/\D/g, '');	// Strip all non-numerical characters from string
@@ -106,7 +102,7 @@ $('body').on('click', 'svg#edit-job-header', function() {
 });
 
 // Add new blank row to table
-$('body').on('click', 'svg#add-row', function() {
+$('tbody').on('click', 'svg#add-row', function() {
 
 	var EditJobNumber = $(this).attr('class');
 	EditJobNumber = EditJobNumber.replace(/\D/g, '');	// Strip all non-numerical characters from string
@@ -125,7 +121,7 @@ $('body').on('click', 'svg#add-row', function() {
 	+' <td class="EditRow_'+EditJobNumber+'"> <img src="img/ModernUI/edit-minus.svg" id="delete-row" class="svg" > </td>'
 	+' </tr>';
 	
-	$("#JobTable_" + EditJobNumber).last().append(AddRowString);
+	$("#JobTable_" + EditJobNumber + " tbody").append(AddRowString);
 	
 	$('td#JobNotes_' + EditJobNumber).editable({
 		lineBreaks: false,
@@ -135,10 +131,35 @@ $('body').on('click', 'svg#add-row', function() {
 	$('[id^="JobUnitPrice"]').numeric();
 	$('[id^="JobLineTotal"]').numeric();
 	
+	// Convert <img> to <svg>
+	jQuery('img.svg').each(function(){
+	
+	var $img = jQuery(this);
+	var imgID = $img.attr('id');
+	var imgClass = $img.attr('class');
+	var imgURL = $img.attr('src');
+
+	jQuery.get(imgURL, function(data) {
+	
+		var $svg = jQuery(data).find('svg');
+
+		if(typeof imgID !== 'undefined') {
+			$svg = $svg.attr('id', imgID);
+		}
+
+		if(typeof imgClass !== 'undefined') {
+			$svg = $svg.attr('class', imgClass+' replaced-svg');
+		}
+
+		$svg = $svg.removeAttr('xmlns:a');
+		$img.replaceWith($svg);
+		});
+	});
+	
 });
 
 // Prompt and delete specific row
-$('body').on('click', 'svg#delete-row', function() {
+$('tbody').on('click', 'svg#delete-row', function() {
 	
 	if (confirm("Delete row?")) {
 	

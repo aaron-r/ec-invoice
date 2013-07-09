@@ -20,8 +20,6 @@
 // . Grab CardID for client selected.
 // . Grab PO Number - error check so that only ONE can be submitted at once.
 
-// . COMESTIC - checkboxes, scrollbars, etc - make custom (remove table lines except border?)
-
 $DatabaseHost 		= 'localhost';
 $DatabaseName 		= 'echips_v2';
 $DatabaseUser		= 'root';
@@ -61,9 +59,9 @@ $(document).ready(function() {
 		$(this).addClass("HighlightJob");
 	});
 	
-	$('#ClientDetail').html('<img id="first-prompt" class="svg" src="img/ModernUI/book-empty.svg" />');
+	$('#ClientDetail').html('<img id="first-prompt" class="svg" src="img/ModernUI/book-empty.svg" /> <p id="first-prompt-text">Select a client to begin.</span>');
 	
-});		// <img id="option-email" class="svg footer-options" src="img/ModernUI/email.svg" />
+});
 
 // Display selected customer's invoices
 function GetJobDetails(cardid) {
@@ -77,7 +75,8 @@ function GetJobDetails(cardid) {
 		}
 	});
 
-	$("#SubmitButton").css('visibility', 'visible');
+	$("#FooterIcons").css('visibility', 'visible');
+	var CurrentCardID = cardid;
 	
 };
 
@@ -148,6 +147,11 @@ var MYOBIncTaxTotal = [];
 		});
 		
 	});
+	// Put error-checking here!!!
+	// - Check if delivery status is selected.
+	// - Check if any jobs are being edited.
+	// - Check for any PO numbers and if there are multiple POs.
+	// **************************
 	
 	// Submit array to be parsed for MYOB
 	$.ajax({
@@ -155,14 +159,14 @@ var MYOBIncTaxTotal = [];
 		url: "Submit_Invoice.php",
 		type: "POST",
 		data: {
-			'PONumber' : '123456',
-			'Quantity' : MYOBQuantity,
-			'ItemNumber' : MYOBItemNumber,
-			'DeliveryStatus' : 'E',			// 'P' (print) or 'E' (e-mail)
-			'Description' : MYOBDescription,
-			'ExTaxTotal' : MYOBExTaxTotal,
-			'IncTaxTotal' : MYOBIncTaxTotal,
-			'CardID' : 'CUS000001'
+			'PONumber' 			: '123456',
+			'Quantity' 			: MYOBQuantity,
+			'ItemNumber' 		: MYOBItemNumber,
+			'DeliveryStatus' 	: DeliveryStatus,
+			'Description' 		: MYOBDescription,
+			'ExTaxTotal' 		: MYOBExTaxTotal,
+			'IncTaxTotal' 		: MYOBIncTaxTotal,
+			'CardID' 			: CurrentCardID
 		},
 		success: function(data) {
 			$('#ClientFooter').html(data);
@@ -171,6 +175,18 @@ var MYOBIncTaxTotal = [];
 	});
 
 }
+
+$('body').on('click', 'svg#option-print', function() {
+	$('svg#option-print path').css('fill', '#FFFFFF');
+	$('svg#option-email path').css('fill', '#7F8285');
+	var DeliveryStatus = 'P';
+});
+
+$('body').on('click', 'svg#option-email', function() {
+	$('svg#option-email path').css('fill', '#FFFFFF');
+	$('svg#option-print path').css('fill', '#7F8285');
+	var DeliveryStatus = 'E';
+});
 
 </script>
 
@@ -201,10 +217,11 @@ foreach($CardID as $value) {
 
 <div id="ClientFooter">
 
+<div id="FooterIcons">
 <img id="option-print" class="svg footer-options" src="img/ModernUI/printer.svg" />
 <img id="option-email" class="svg footer-options" src="img/ModernUI/email.svg" />
-
 <span onclick="SubmitInvoice();" id="SubmitButton">SUBMIT INVOICES</button>
+</div>
 
 </div>
 

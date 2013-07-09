@@ -11,6 +11,7 @@ Waiting for initial release!
 
 <h2>Planned Features</h2>
 
+* Custom 'Yes/No' prompt when deleting a row.
 * Restrict Part Code fields to only be editable up to one line.
 * Check if selected client has an e-mail address within MYOB. If not, prompt to add one.
 * Ability to submit multiple invoices with multiple PO numbers.
