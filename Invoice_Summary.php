@@ -14,10 +14,7 @@
 // ----------
 // . Return invoice number.
 // . Set invoice number against database and close job.
-// . Make sure TOTALS import correctly.
 
-// . Grab option to set Email or Print.
-// . Grab CardID for client selected.
 // . Grab PO Number - error check so that only ONE can be submitted at once.
 
 $DatabaseHost 		= 'localhost';
@@ -61,6 +58,21 @@ $(document).ready(function() {
 	
 	$('#ClientDetail').html('<img id="first-prompt" class="svg" src="img/ModernUI/book-empty.svg" /> <p id="first-prompt-text">Select a client to begin.</span>');
 	
+	var MYOBDeliveryStatus;
+	var MYOBCardID;
+	
+});
+
+$('body').on('click', 'svg#option-print', function() {
+	$('svg#option-print path').css('fill', '#FFFFFF');
+	$('svg#option-email path').css('fill', '#7F8285');
+	MYOBDeliveryStatus = "P";
+});
+
+$('body').on('click', 'svg#option-email', function() {
+	$('svg#option-email path').css('fill', '#FFFFFF');
+	$('svg#option-print path').css('fill', '#7F8285');
+	MYOBDeliveryStatus = "E";
 });
 
 // Display selected customer's invoices
@@ -76,19 +88,33 @@ function GetJobDetails(cardid) {
 	});
 
 	$("#FooterIcons").css('visibility', 'visible');
-	var CurrentCardID = cardid;
+	MYOBCardID = cardid;
+	
+	console.log(MYOBCardID);
 	
 };
 
 function SubmitInvoice() {
 
+var MYOBPONumber = [];
 var MYOBQuantity = [];
 var MYOBItemNumber = [];
 var MYOBDescription = [];
 var MYOBExTaxTotal = [];
 var MYOBIncTaxTotal = [];
+var n = 0;
 	
 	$('#ClientDetail').ready(function() {
+		
+		$('input[type=checkbox]:checked').each(function() {
+		
+			var CheckPONumber = $(this).closest('tr').find("input[id^=JobPONumber]").val();
+
+			if (CheckPONumber !== "") {
+				$(this).attr('checked', false);
+			}
+			
+		});
 		
 		$('input[type=checkbox]:checked').each(function() {
 		
@@ -123,70 +149,60 @@ var MYOBIncTaxTotal = [];
 					} else {
 						MYOBQuantity.push( $(this).closest('tr').find("input[id^=JobQty]").val() );
 						MYOBItemNumber.push( $(this).closest('tr').find("input[id^=JobCode]").val() );
-						MYOBExTaxTotal.push("0");
-						MYOBIncTaxTotal.push( $(this).closest('tr').find("input[id^=JobLineTotal]").val() );
+						MYOBExTaxTotal.push( $(this).closest('tr').find("input[id^=JobLineTotal]").val() );
+						MYOBIncTaxTotal.push("0");
 					}
 					
 					if (Description[n] != "") {
 						MYOBDescription.push( Description[n].replace(/'/g,"''") );
 					}	
 				}
-				
+			
 			});
-
+	
 			// Add blank-line between jobs
 			MYOBQuantity.push("1");
 			MYOBItemNumber.push("misc");
 			MYOBDescription.push("-");
 			MYOBExTaxTotal.push("0");
 			MYOBIncTaxTotal.push("0");
-			
-			console.log(MYOBQuantity);
-			console.log(MYOBItemNumber);
-			console.log(MYOBDescription);
 		});
 		
 	});
-	// Put error-checking here!!!
-	// - Check if delivery status is selected.
-	// - Check if any jobs are being edited.
-	// - Check for any PO numbers and if there are multiple POs.
-	// **************************
+	// Basic error checking
+	if (typeof MYOBDeliveryStatus === 'undefined') {
+		alert("You must select to either PRINT or EMAIL your invoice!");
+		return;
+	}
 	
 	// Submit array to be parsed for MYOB
-	$.ajax({
+	MYOBSubmit(MYOBPONumber, MYOBQuantity, MYOBItemNumber, MYOBDeliveryStatus, MYOBDescription, MYOBExTaxTotal, MYOBIncTaxTotal, MYOBCardID);
 	
+}
+
+function MYOBSubmit(MYOBPONumber, MYOBQuantity, MYOBItemNumber, MYOBDeliveryStatus, MYOBDescription, MYOBExTaxTotal, MYOBIncTaxTotal, MYOBCardID) {
+
+		$.ajax({
+
 		url: "Submit_Invoice.php",
 		type: "POST",
 		data: {
-			'PONumber' 			: '123456',
+			'PONumber' 			: MYOBPONumber,
 			'Quantity' 			: MYOBQuantity,
 			'ItemNumber' 		: MYOBItemNumber,
-			'DeliveryStatus' 	: DeliveryStatus,
+			'DeliveryStatus' 	: MYOBDeliveryStatus,
 			'Description' 		: MYOBDescription,
 			'ExTaxTotal' 		: MYOBExTaxTotal,
 			'IncTaxTotal' 		: MYOBIncTaxTotal,
-			'CardID' 			: CurrentCardID
+			'CardID' 			: MYOBCardID
 		},
 		success: function(data) {
-			$('#ClientFooter').html(data);
+			console.log(data);
 		}
-	
+
 	});
 
 }
-
-$('body').on('click', 'svg#option-print', function() {
-	$('svg#option-print path').css('fill', '#FFFFFF');
-	$('svg#option-email path').css('fill', '#7F8285');
-	var DeliveryStatus = 'P';
-});
-
-$('body').on('click', 'svg#option-email', function() {
-	$('svg#option-email path').css('fill', '#FFFFFF');
-	$('svg#option-print path').css('fill', '#7F8285');
-	var DeliveryStatus = 'E';
-});
 
 </script>
 

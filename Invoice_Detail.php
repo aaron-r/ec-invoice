@@ -13,6 +13,8 @@
 
 <?
 
+// . Decimal places not being totaled
+
 date_default_timezone_set('Australia/Perth');
 
 $DisplayCardID = $_POST['input'];
