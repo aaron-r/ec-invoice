@@ -17,6 +17,11 @@
 
 // . Grab PO Number - error check so that only ONE can be submitted at once.
 
+// . Display error if any totals EQUAL $0 - "Do you want to proceed?"
+// . Show error message if invoice isn't submitted properly
+// . Show success message if invoice IS submitted OK - ability to UNDO
+// . Animate the above messages
+
 $DatabaseHost 		= 'localhost';
 $DatabaseName 		= 'echips_v2';
 $DatabaseUser		= 'root';
@@ -96,91 +101,103 @@ function GetJobDetails(cardid) {
 
 function SubmitInvoice() {
 
-var MYOBPONumber = [];
-var MYOBQuantity = [];
-var MYOBItemNumber = [];
-var MYOBDescription = [];
-var MYOBExTaxTotal = [];
-var MYOBIncTaxTotal = [];
-var n = 0;
+	var MYOBPONumber = [];
+	var MYOBQuantity = [];
+	var MYOBItemNumber = [];
+	var MYOBDescription = [];
+	var MYOBExTaxTotal = [];
+	var MYOBIncTaxTotal = [];
+	var n = 0;
 	
 	$('#ClientDetail').ready(function() {
 		
 		$('input[type=checkbox]:checked').each(function() {
-		
 			var CheckPONumber = $(this).closest('tr').find("input[id^=JobPONumber]").val();
-
 			if (CheckPONumber !== "") {
 				$(this).attr('checked', false);
 			}
-			
 		});
 		
 		$('input[type=checkbox]:checked').each(function() {
+			CurrentJob = $(this);
+			CompileJobs(CurrentJob, MYOBPONumber, MYOBQuantity, MYOBItemNumber, MYOBDescription, MYOBExTaxTotal, MYOBIncTaxTotal);
+		});
 		
-			var JobNumber = $(this).val();
-			MYOBDescription.push( $('span#JobTitle_' + JobNumber).html() );
-			MYOBQuantity.push("1");
-			MYOBItemNumber.push("misc");
-			MYOBExTaxTotal.push("0");
-			MYOBIncTaxTotal.push("0");
-
-			$('td#JobNotes_' + JobNumber).each(function() {
-				
-				var WholeText = $(this).html();
-				var Description = WholeText.split('\n');
-				
-				var n;
-				for (n = 0; n < Description.length; n++) {
-				
-					if (Description[n].length > 255) {
-						$('td#JobNotes_' + JobNumber).addClass("LengthExceeded");
-					}
-
-					var CheckJobCode = $(this).closest('tr').find("input[id^=JobCode]").val();
-					
-					if (n != 0) {
-						if (CheckJobCode.substring(0, 6) == "onsite" || CheckJobCode.substring(0, 6) == "inshop") {
-							MYOBQuantity.push("1");
-							MYOBItemNumber.push("Service");
-							MYOBExTaxTotal.push("0");
-							MYOBIncTaxTotal.push("0");
-						}
-					} else {
-						MYOBQuantity.push( $(this).closest('tr').find("input[id^=JobQty]").val() );
-						MYOBItemNumber.push( $(this).closest('tr').find("input[id^=JobCode]").val() );
-						MYOBExTaxTotal.push( $(this).closest('tr').find("input[id^=JobLineTotal]").val() );
-						MYOBIncTaxTotal.push("0");
-					}
-					
-					if (Description[n] != "") {
-						MYOBDescription.push( Description[n].replace(/'/g,"''") );
-					}	
-				}
-			
-			});
-	
-			// Add blank-line between jobs
-			MYOBQuantity.push("1");
-			MYOBItemNumber.push("misc");
-			MYOBDescription.push("-");
-			MYOBExTaxTotal.push("0");
-			MYOBIncTaxTotal.push("0");
+		var CheckPONumber = [];
+		
+		$('input[type=checkbox]').not(":checked").each(function() {
+			CheckPONumber.push( $(this).closest('tr').find("input[id^=JobPONumber]").val() );
+			console.log(CheckPONumber);
 		});
 		
 	});
+	
 	// Basic error checking
 	if (typeof MYOBDeliveryStatus === 'undefined') {
 		alert("You must select to either PRINT or EMAIL your invoice!");
 		return;
 	}
 	
-	// Submit array to be parsed for MYOB
-	MYOBSubmit(MYOBPONumber, MYOBQuantity, MYOBItemNumber, MYOBDeliveryStatus, MYOBDescription, MYOBExTaxTotal, MYOBIncTaxTotal, MYOBCardID);
+	// Submit array to be parsed in to MYOB
+	SubmitToMYOB(MYOBPONumber, MYOBQuantity, MYOBItemNumber, MYOBDeliveryStatus, MYOBDescription, MYOBExTaxTotal, MYOBIncTaxTotal, MYOBCardID);
 	
 }
 
-function MYOBSubmit(MYOBPONumber, MYOBQuantity, MYOBItemNumber, MYOBDeliveryStatus, MYOBDescription, MYOBExTaxTotal, MYOBIncTaxTotal, MYOBCardID) {
+function CompileJobs(CurrentJob, MYOBPONumber, MYOBQuantity, MYOBItemNumber, MYOBDescription, MYOBExTaxTotal, MYOBIncTaxTotal) {
+
+	var JobNumber = CurrentJob.val();
+	MYOBDescription.push( $('span#JobTitle_' + JobNumber).html() );
+	MYOBQuantity.push("1");
+	MYOBItemNumber.push("misc");
+	MYOBExTaxTotal.push("0");
+	MYOBIncTaxTotal.push("0");
+
+	$('td#JobNotes_' + JobNumber).each(function() {
+		
+		var WholeText = $(this).html();
+		var Description = WholeText.split('\n');
+		
+		var n;
+		for (n = 0; n < Description.length; n++) {
+		
+			if (Description[n].length > 255) {
+				$('td#JobNotes_' + JobNumber).addClass("LengthExceeded");
+				alert("Line exceeds 255 characters! Please shorten this line.");
+			}
+
+			var CheckJobCode = $(this).closest('tr').find("input[id^=JobCode]").val();
+			
+			if (n != 0) {
+				if (CheckJobCode.substring(0, 6) == "onsite" || CheckJobCode.substring(0, 6) == "inshop") {
+					MYOBQuantity.push("1");
+					MYOBItemNumber.push("Service");
+					MYOBExTaxTotal.push("0");
+					MYOBIncTaxTotal.push("0");
+				}
+			} else {
+				MYOBQuantity.push( $(this).closest('tr').find("input[id^=JobQty]").val() );
+				MYOBItemNumber.push( $(this).closest('tr').find("input[id^=JobCode]").val() );
+				MYOBExTaxTotal.push( $(this).closest('tr').find("input[id^=JobLineTotal]").val() );
+				MYOBIncTaxTotal.push("0");
+			}
+			
+			if (Description[n] != "") {
+				MYOBDescription.push( Description[n].replace(/'/g,"''") );
+			}	
+		}
+	
+	});
+
+	// Add blank-line between jobs
+	MYOBQuantity.push("1");
+	MYOBItemNumber.push("misc");
+	MYOBDescription.push("-");
+	MYOBExTaxTotal.push("0");
+	MYOBIncTaxTotal.push("0");
+
+}
+
+function SubmitToMYOB(MYOBPONumber, MYOBQuantity, MYOBItemNumber, MYOBDeliveryStatus, MYOBDescription, MYOBExTaxTotal, MYOBIncTaxTotal, MYOBCardID) {
 
 		$.ajax({
 
