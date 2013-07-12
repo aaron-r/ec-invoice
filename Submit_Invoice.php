@@ -19,11 +19,16 @@ foreach($QuantityArray as $key => $value) {
 }
 
 $SQLString = rtrim($SQLString, ",");
+
+
+
 $SQLString .= ')';
 
-$SQLStatement = $Database -> prepare ($SQLString);
-$SQLStatement->execute();
+// $SQLStatement = $Database -> prepare ($SQLString);
+// $SQLStatement->execute();
 
-echo file_get_contents('C:\Users\aaron.r\AppData\Local\Temp\MYOBODBCError.txt', true);
+//echo file_get_contents('C:\Users\aaron.r\AppData\Local\Temp\MYOBODBCError.txt', true);
+
+echo $SQLString;
 
 ?>

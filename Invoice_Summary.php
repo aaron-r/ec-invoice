@@ -108,6 +108,7 @@ function SubmitInvoice() {
 	var MYOBExTaxTotal = [];
 	var MYOBIncTaxTotal = [];
 	var n = 0;
+	var SQLString = "";
 	
 	$('#ClientDetail').ready(function() {
 		
@@ -126,8 +127,14 @@ function SubmitInvoice() {
 		var CheckPONumber = [];
 		
 		$('input[type=checkbox]').not(":checked").each(function() {
-			CheckPONumber.push( $(this).closest('tr').find("input[id^=JobPONumber]").val() );
-			console.log(CheckPONumber);
+		
+			// CheckPONumber.push( $(this).closest('tr').find("input[id^=JobPONumber]").val() );
+			// console.log(CheckPONumber);
+			
+			CurrentJob = $(this);
+			MYOBPONumber = $(this).closest('tr').find("input[id^=JobPONumber]").val();
+			console.log(MYOBPONumber);
+			CompileJobs(CurrentJob, MYOBPONumber, MYOBQuantity, MYOBItemNumber, MYOBDescription, MYOBExTaxTotal, MYOBIncTaxTotal);
 		});
 		
 	});
@@ -228,7 +235,7 @@ function SubmitToMYOB(MYOBPONumber, MYOBQuantity, MYOBItemNumber, MYOBDeliverySt
 
 <?
 
-// Display summary list of all clients with outstanding invoices
+// Display summarised list of clients who have outstanding invoices
 foreach($CardID as $value) {
 	
 	echo '
