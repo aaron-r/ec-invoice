@@ -32,16 +32,16 @@ $CounterDisplay		= 0;
 $Database = new PDO('mysql:host='.$DatabaseHost.';dbname='.$DatabaseName.'',$DatabaseUser,$DatabasePass) or die("Oh no, I can't connect to the database!");
 
 $FirstQuery = $Database->query("SELECT DISTINCT(customers.lastname), customers.firstname, COUNT(DISTINCT jobitems.jobnumber) AS UnbilledJobs, 
-								customers.cardid, ROUND(SUM(qtycharged * quotedprice), 2) as SubTotal
+								customers.CardID, ROUND(SUM(qtycharged * quotedprice), 2) as SubTotal
 								FROM customers, jobdetails, jobitems
-								WHERE jobdetails.customerid = customers.cardid
+								WHERE jobdetails.customerid = customers.CardID
 								AND jobdetails.jobnumber = jobitems.jobnumber
 								AND jobdetails.datetimesheet IS NOT NULL AND jobdetails.invoicenumber IS NULL
 								GROUP BY customers.lastname
 								HAVING UnbilledJobs > 0");
 
 foreach($FirstQuery as $row) {
-	$CardID[$CounterStart] 				= $row['cardid'];
+	$CardID[$CounterStart] 				= $row['CardID'];
 	$CustomerLastName[$CounterStart] 	= $row['lastname'];
 	$CustomerFirstName[$CounterStart] 	= $row['firstname'];
 	$UnbilledJobs[$CounterStart] 		= $row['UnbilledJobs'];
@@ -53,6 +53,10 @@ foreach($FirstQuery as $row) {
 
 <script>
 
+var MYOBDeliveryStatus;
+var MYOBCardID;
+var SQLString;
+
 // Highlight selected customer
 $(document).ready(function() {
 
@@ -62,10 +66,6 @@ $(document).ready(function() {
 	});
 	
 	$('#ClientDetail').html('<img id="first-prompt" class="svg" src="img/ModernUI/book-empty.svg" /> <p id="first-prompt-text">Select a client to begin.</span>');
-	
-	var MYOBDeliveryStatus;
-	var MYOBCardID;
-	
 });
 
 $('body').on('click', 'svg#option-print', function() {
@@ -81,62 +81,90 @@ $('body').on('click', 'svg#option-email', function() {
 });
 
 // Display selected customer's invoices
-function GetJobDetails(cardid) {
+function GetJobDetails(CardID) {
 
 	$.ajax({
 		url: "Invoice_Detail.php",
 		type: "POST",
-		data: {input : cardid},
+		data: {input : CardID},
 		success: function(data) {
 			$('#ClientDetail').html(data);
 		}
 	});
 
+	MYOBCardID = CardID;
 	$("#FooterIcons").css('visibility', 'visible');
-	MYOBCardID = cardid;
-	
-	console.log(MYOBCardID);
-	
 };
 
 function SubmitInvoice() {
 
-	var MYOBPONumber = [];
-	var MYOBQuantity = [];
-	var MYOBItemNumber = [];
-	var MYOBDescription = [];
-	var MYOBExTaxTotal = [];
-	var MYOBIncTaxTotal = [];
+	// var CurrentJobArray = [];
+	// var MYOBPONumber = [];
+	
+	var PONumberObject = [];
+	var MYOBQuantity;
+	var MYOBItemNumber;
+	var MYOBDescription;
+	var MYOBExTaxTotal;
+	var MYOBIncTaxTotal;
 	var n = 0;
-	var SQLString = "";
+	
+	SQLString = "INSERT INTO Import_Item_Sales (CustomersNumber, ItemNumber, DeliveryStatus, Quantity, Description, ExTaxTotal, IncTaxTotal, CardID) VALUES ( ";
 	
 	$('#ClientDetail').ready(function() {
 		
 		$('input[type=checkbox]:checked').each(function() {
 			var CheckPONumber = $(this).closest('tr').find("input[id^=JobPONumber]").val();
 			if (CheckPONumber !== "") {
+			
 				$(this).attr('checked', false);
+				$(this).closest("table").addClass(CheckPONumber);
 			}
 		});
 		
 		$('input[type=checkbox]:checked').each(function() {
-			CurrentJob = $(this);
-			CompileJobs(CurrentJob, MYOBPONumber, MYOBQuantity, MYOBItemNumber, MYOBDescription, MYOBExTaxTotal, MYOBIncTaxTotal);
+			CurrentJob = $(this).val();
+			CompileJobs(CurrentJob, "", MYOBQuantity, MYOBItemNumber, MYOBDescription, MYOBExTaxTotal, MYOBIncTaxTotal, MYOBCardID);
 		});
-		
-		var CheckPONumber = [];
+
+		SQLString = SQLString.slice(0, - 1);
+		SQLString += ') END TRANSACTION INSERT INTO Import_Item_Sales (CustomersNumber, ItemNumber, DeliveryStatus, Quantity, Description, ExTaxTotal, IncTaxTotal, CardID) VALUES ( ';
 		
 		$('input[type=checkbox]').not(":checked").each(function() {
-		
-			// CheckPONumber.push( $(this).closest('tr').find("input[id^=JobPONumber]").val() );
-			// console.log(CheckPONumber);
+			MYOBPONumber = $(this).closest('table').attr('class');
+			CurrentJobNumber = $(this).closest('table').attr('id').replace(/\D/g,'');
 			
-			CurrentJob = $(this);
-			MYOBPONumber = $(this).closest('tr').find("input[id^=JobPONumber]").val();
-			console.log(MYOBPONumber);
-			CompileJobs(CurrentJob, MYOBPONumber, MYOBQuantity, MYOBItemNumber, MYOBDescription, MYOBExTaxTotal, MYOBIncTaxTotal);
+			PONumberObject.push({'MYOBPONumber':MYOBPONumber,'CurrentJobNumber':CurrentJobNumber});
 		});
 		
+		function SortByPO(a,b) {
+			return a.MYOBPONumber > b.MYOBPONumber ? 1 : -1;
+		}
+		
+		PONumberObject.sort(SortByPO);
+		
+		for (var i = 0; i < PONumberObject.length; i++) {
+
+			var MYOBPONumber = PONumberObject[i].MYOBPONumber;
+			//var PreviousPONumber = PONumberObject[i-1].MYOBPONumber;
+			var PreviousPONumber = "";
+			var CurrentJobNumber = PONumberObject[i].CurrentJobNumber;
+			
+			console.log(MYOBPONumber + " <> " + PreviousPONumber);
+			
+			if (MYOBPONumber[i] != PreviousPONumber) {
+				CompileJobs(CurrentJobNumber, MYOBPONumber, MYOBQuantity, MYOBItemNumber, MYOBDescription, MYOBExTaxTotal, MYOBIncTaxTotal, MYOBCardID);
+				console.log("SAME PO NUMBER");
+			} else {
+				SQLString = SQLString.slice(0, - 1);
+				SQLString += ') END TRANSACTION INSERT INTO Import_Item_Sales (CustomersNumber, ItemNumber, DeliveryStatus, Quantity, Description, ExTaxTotal, IncTaxTotal, CardID) VALUES ( ';
+				console.log("DIFFERENT PO NUMBER");
+			}
+		}
+		
+		SQLString = SQLString.slice(0, - 2);
+		SQLString += ") COMMIT";
+		console.log(SQLString);
 	});
 	
 	// Basic error checking
@@ -144,22 +172,15 @@ function SubmitInvoice() {
 		alert("You must select to either PRINT or EMAIL your invoice!");
 		return;
 	}
-	
-	// Submit array to be parsed in to MYOB
-	SubmitToMYOB(MYOBPONumber, MYOBQuantity, MYOBItemNumber, MYOBDeliveryStatus, MYOBDescription, MYOBExTaxTotal, MYOBIncTaxTotal, MYOBCardID);
-	
 }
 
-function CompileJobs(CurrentJob, MYOBPONumber, MYOBQuantity, MYOBItemNumber, MYOBDescription, MYOBExTaxTotal, MYOBIncTaxTotal) {
+function CompileJobs(CurrentJob, MYOBPONumber, MYOBQuantity, MYOBItemNumber, MYOBDescription, MYOBExTaxTotal, MYOBIncTaxTotal, MYOBCardID) {
 
-	var JobNumber = CurrentJob.val();
-	MYOBDescription.push( $('span#JobTitle_' + JobNumber).html() );
-	MYOBQuantity.push("1");
-	MYOBItemNumber.push("misc");
-	MYOBExTaxTotal.push("0");
-	MYOBIncTaxTotal.push("0");
+	// Add initial job title
+	MYOBDescription = $('span#JobTitle_' + CurrentJob).html();
+	AppendToSQLString(MYOBPONumber,"misc","1",MYOBDeliveryStatus,MYOBDescription,"0","0",MYOBCardID);
 
-	$('td#JobNotes_' + JobNumber).each(function() {
+	$('td#JobNotes_' + CurrentJob).each(function() {
 		
 		var WholeText = $(this).html();
 		var Description = WholeText.split('\n');
@@ -168,7 +189,7 @@ function CompileJobs(CurrentJob, MYOBPONumber, MYOBQuantity, MYOBItemNumber, MYO
 		for (n = 0; n < Description.length; n++) {
 		
 			if (Description[n].length > 255) {
-				$('td#JobNotes_' + JobNumber).addClass("LengthExceeded");
+				$('td#JobNotes_' + CurrentJob).addClass("LengthExceeded");
 				alert("Line exceeds 255 characters! Please shorten this line.");
 			}
 
@@ -176,57 +197,39 @@ function CompileJobs(CurrentJob, MYOBPONumber, MYOBQuantity, MYOBItemNumber, MYO
 			
 			if (n != 0) {
 				if (CheckJobCode.substring(0, 6) == "onsite" || CheckJobCode.substring(0, 6) == "inshop") {
-					MYOBQuantity.push("1");
-					MYOBItemNumber.push("Service");
-					MYOBExTaxTotal.push("0");
-					MYOBIncTaxTotal.push("0");
+					MYOBQuantity = "1";
+					MYOBItemNumber = "Service";
+					MYOBExTaxTotal = "0";
+					MYOBIncTaxTotal = "0";
 				}
 			} else {
-				MYOBQuantity.push( $(this).closest('tr').find("input[id^=JobQty]").val() );
-				MYOBItemNumber.push( $(this).closest('tr').find("input[id^=JobCode]").val() );
-				MYOBExTaxTotal.push( $(this).closest('tr').find("input[id^=JobLineTotal]").val() );
-				MYOBIncTaxTotal.push("0");
+				MYOBQuantity = $(this).closest('tr').find("input[id^=JobQty]").val();
+				MYOBItemNumber = $(this).closest('tr').find("input[id^=JobCode]").val();
+				MYOBExTaxTotal = $(this).closest('tr').find("input[id^=JobLineTotal]").val();
+				MYOBIncTaxTotal = "0";
 			}
 			
 			if (Description[n] != "") {
-				MYOBDescription.push( Description[n].replace(/'/g,"''") );
-			}	
+				MYOBDescription = Description[n].replace(/'/g,"''");
+			}
+			
+			AppendToSQLString(MYOBPONumber,MYOBItemNumber,MYOBQuantity,MYOBDeliveryStatus,MYOBDescription,MYOBExTaxTotal,MYOBIncTaxTotal,MYOBCardID);
 		}
+	});
 	
-	});
-
 	// Add blank-line between jobs
-	MYOBQuantity.push("1");
-	MYOBItemNumber.push("misc");
-	MYOBDescription.push("-");
-	MYOBExTaxTotal.push("0");
-	MYOBIncTaxTotal.push("0");
-
+	AppendToSQLString(MYOBPONumber,"misc","1",MYOBDeliveryStatus,"-","0","0",MYOBCardID);
 }
 
-function SubmitToMYOB(MYOBPONumber, MYOBQuantity, MYOBItemNumber, MYOBDeliveryStatus, MYOBDescription, MYOBExTaxTotal, MYOBIncTaxTotal, MYOBCardID) {
+var AppendToSQLString = function (MYOBPONumber, MYOBItemNumber, MYOBQuantity, MYOBDeliveryStatus, MYOBDescription, MYOBExTaxTotal, MYOBIncTaxTotal, MYOBCardID) {
 
-		$.ajax({
-
-		url: "Submit_Invoice.php",
-		type: "POST",
-		data: {
-			'PONumber' 			: MYOBPONumber,
-			'Quantity' 			: MYOBQuantity,
-			'ItemNumber' 		: MYOBItemNumber,
-			'DeliveryStatus' 	: MYOBDeliveryStatus,
-			'Description' 		: MYOBDescription,
-			'ExTaxTotal' 		: MYOBExTaxTotal,
-			'IncTaxTotal' 		: MYOBIncTaxTotal,
-			'CardID' 			: MYOBCardID
-		},
-		success: function(data) {
-			console.log(data);
-		}
-
-	});
-
+	SQLString += "('"+ MYOBPONumber +"','"+ MYOBItemNumber +"','"+ MYOBQuantity +"','"+ MYOBDeliveryStatus +"','"+ MYOBDescription +"','"+ MYOBExTaxTotal +"','"+ MYOBIncTaxTotal +"','"+ MYOBCardID +"') ,";
 }
+
+// ...
+
+// STRING completes here
+// SUBMIT STRING NOW
 
 </script>
 

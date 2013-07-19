@@ -5,7 +5,7 @@ Waiting for initial release!
 <h2>Known Issues</h2>
 
 * When all rows are deleted in a table, the table formatting breaks.
-* The add/remove row icons do not fade-in initially when a job is edited. They work correctly after this though.
+* The add/remove row icons do not fade-in initially when a job is edited. They display correctly after this though.
 * Entire job is highlighted red if one line exceeds 255 characters. Just the single line should be highlighted instead.
 
 <h2>Planned Features</h2>

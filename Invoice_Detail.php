@@ -98,9 +98,7 @@ $('tbody').on('click', 'svg#edit-job-header', function() {
 		$('input#JobLineTotal_' + EditJobNumber).prop("disabled", true);
 		
 	$(".EditRow_" + EditJobNumber).fadeOut(1000);
-	
 	}
-
 });
 
 // Add new blank row to table
@@ -157,7 +155,6 @@ $('tbody').on('click', 'svg#add-row', function() {
 		$img.replaceWith($svg);
 		});
 	});
-	
 });
 
 // Prompt and delete specific row
@@ -176,8 +173,7 @@ $('tbody').on('click', 'svg#delete-row', function() {
 		$('#EditTotal_' + EditJobNumber).html(EditJobTotal.toFixed(2));
 		
 		$(event.target).closest('tr').remove();
-	} 
-
+	}
 });
 
 // Auto-calculate totals when fields are changed
@@ -200,7 +196,6 @@ $('body').on('keyup', '.EditJobContents', function() {
 	});
 	
 	$('#EditTotal_' + EditJobNumber).html(FinalJobTotal.toFixed(2));
-	
 });
 
 </script>
@@ -208,7 +203,6 @@ $('body').on('keyup', '.EditJobContents', function() {
 <?
 
 foreach($JobNumber as $value) {
-
 
 	if ($value != $JobNumber[$CounterDisplay - 1]) {
 	
@@ -254,7 +248,6 @@ foreach($JobNumber as $value) {
 		echo '</tr>';
 		
 		$CounterDisplay++;
-
 	} 
 	
 	else {
@@ -285,10 +278,8 @@ foreach($JobNumber as $value) {
 					<div id="DisplayJobTotal"> <span id="EditTotal_'. $value .'"> '. $JobTotal .' </span> </div>
 				</div>';
 
-		$JobTotal = 0;
-		
+		$JobTotal = 0;	
 	}
-
 }
 
 ?>
