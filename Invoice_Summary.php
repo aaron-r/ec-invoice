@@ -19,7 +19,7 @@
 
 // . Display error if any totals EQUAL $0 - "Do you want to proceed?"
 // . Show error message if invoice isn't submitted properly
-// . Show success message if invoice IS submitted OK - ability to UNDO
+// . Show success message if invoice IS submitted OK
 // . Animate the above messages
 
 $DatabaseHost 		= 'localhost';
@@ -98,9 +98,6 @@ function GetJobDetails(CardID) {
 
 function SubmitInvoice() {
 
-	// var CurrentJobArray = [];
-	// var MYOBPONumber = [];
-	
 	var PONumberObject = [];
 	var MYOBQuantity;
 	var MYOBItemNumber;
@@ -109,7 +106,7 @@ function SubmitInvoice() {
 	var MYOBIncTaxTotal;
 	var n = 0;
 	
-	SQLString = "INSERT INTO Import_Item_Sales (CustomersNumber, ItemNumber, DeliveryStatus, Quantity, Description, ExTaxTotal, IncTaxTotal, CardID) VALUES ( ";
+	SQLString = "INSERT INTO Import_Item_Sales (CustomersNumber, ItemNumber, DeliveryStatus, Quantity, Description, ExTaxTotal, IncTaxTotal, CardID) VALUES (";
 	
 	$('#ClientDetail').ready(function() {
 		
@@ -126,10 +123,10 @@ function SubmitInvoice() {
 			CurrentJob = $(this).val();
 			CompileJobs(CurrentJob, "", MYOBQuantity, MYOBItemNumber, MYOBDescription, MYOBExTaxTotal, MYOBIncTaxTotal, MYOBCardID);
 		});
-
-		SQLString = SQLString.slice(0, - 1);
-		SQLString += ') END TRANSACTION INSERT INTO Import_Item_Sales (CustomersNumber, ItemNumber, DeliveryStatus, Quantity, Description, ExTaxTotal, IncTaxTotal, CardID) VALUES ( ';
 		
+		// TO-DO: If no PO number is entered, skip straight to submitting the invoice
+		EndJobTransaction(SQLString,"First")
+
 		$('input[type=checkbox]').not(":checked").each(function() {
 			MYOBPONumber = $(this).closest('table').attr('class');
 			CurrentJobNumber = $(this).closest('table').attr('id').replace(/\D/g,'');
@@ -146,25 +143,27 @@ function SubmitInvoice() {
 		for (var i = 0; i < PONumberObject.length; i++) {
 
 			var MYOBPONumber = PONumberObject[i].MYOBPONumber;
-			//var PreviousPONumber = PONumberObject[i-1].MYOBPONumber;
-			var PreviousPONumber = "";
 			var CurrentJobNumber = PONumberObject[i].CurrentJobNumber;
-			
-			console.log(MYOBPONumber + " <> " + PreviousPONumber);
-			
-			if (MYOBPONumber[i] != PreviousPONumber) {
+		
+			if (i == 0) {
+				// First PO Number
+				var PreviousPONumber = "";
 				CompileJobs(CurrentJobNumber, MYOBPONumber, MYOBQuantity, MYOBItemNumber, MYOBDescription, MYOBExTaxTotal, MYOBIncTaxTotal, MYOBCardID);
-				console.log("SAME PO NUMBER");
+				continue;
 			} else {
-				SQLString = SQLString.slice(0, - 1);
-				SQLString += ') END TRANSACTION INSERT INTO Import_Item_Sales (CustomersNumber, ItemNumber, DeliveryStatus, Quantity, Description, ExTaxTotal, IncTaxTotal, CardID) VALUES ( ';
-				console.log("DIFFERENT PO NUMBER");
+				var PreviousPONumber = PONumberObject[i - 1].MYOBPONumber;
+			}
+			
+			if (MYOBPONumber == PreviousPONumber) {
+				CompileJobs(CurrentJobNumber, MYOBPONumber, MYOBQuantity, MYOBItemNumber, MYOBDescription, MYOBExTaxTotal, MYOBIncTaxTotal, MYOBCardID);
+			} else {
+				EndJobTransaction(SQLString,"Next")
+				CompileJobs(CurrentJobNumber, MYOBPONumber, MYOBQuantity, MYOBItemNumber, MYOBDescription, MYOBExTaxTotal, MYOBIncTaxTotal, MYOBCardID);
 			}
 		}
 		
-		SQLString = SQLString.slice(0, - 2);
-		SQLString += ") COMMIT";
-		console.log(SQLString);
+		EndJobTransaction(SQLString,"Last")
+		
 	});
 	
 	// Basic error checking
@@ -174,11 +173,30 @@ function SubmitInvoice() {
 	}
 }
 
+function EndJobTransaction(SQLString,JobStatus) {
+		
+		if (JobStatus == "First") {
+			SQLString = SQLString.slice(0, - 1);
+			SubmitToMYOB(SQLString,JobStatus);
+			console.log("First...");
+			
+		} else if (JobStatus == "Next") {
+			SQLString = SQLString.slice(0, - 1);
+			SubmitToMYOB(SQLString,JobStatus);
+			SubmitToMYOB("END TRANSACTION","");
+			console.log("Next...");
+			
+		} else if (JobStatus == "Last") {
+			SubmitToMYOB("",JobStatus);
+			console.log("Last...");
+		}
+}
+
 function CompileJobs(CurrentJob, MYOBPONumber, MYOBQuantity, MYOBItemNumber, MYOBDescription, MYOBExTaxTotal, MYOBIncTaxTotal, MYOBCardID) {
 
 	// Add initial job title
 	MYOBDescription = $('span#JobTitle_' + CurrentJob).html();
-	AppendToSQLString(MYOBPONumber,"misc","1",MYOBDeliveryStatus,MYOBDescription,"0","0",MYOBCardID);
+	AppendToSQLString(MYOBPONumber,"misc",MYOBDeliveryStatus,"1",MYOBDescription,"0","0",MYOBCardID);
 
 	$('td#JobNotes_' + CurrentJob).each(function() {
 		
@@ -218,18 +236,33 @@ function CompileJobs(CurrentJob, MYOBPONumber, MYOBQuantity, MYOBItemNumber, MYO
 	});
 	
 	// Add blank-line between jobs
-	AppendToSQLString(MYOBPONumber,"misc","1",MYOBDeliveryStatus,"-","0","0",MYOBCardID);
+	AppendToSQLString(MYOBPONumber,"misc",MYOBDeliveryStatus,"1","-","0","0",MYOBCardID);
 }
 
-var AppendToSQLString = function (MYOBPONumber, MYOBItemNumber, MYOBQuantity, MYOBDeliveryStatus, MYOBDescription, MYOBExTaxTotal, MYOBIncTaxTotal, MYOBCardID) {
+var AppendToSQLString = function (MYOBPONumber, MYOBItemNumber, MYOBDeliveryStatus, MYOBQuantity, MYOBDescription, MYOBExTaxTotal, MYOBIncTaxTotal, MYOBCardID) {
 
-	SQLString += "('"+ MYOBPONumber +"','"+ MYOBItemNumber +"','"+ MYOBQuantity +"','"+ MYOBDeliveryStatus +"','"+ MYOBDescription +"','"+ MYOBExTaxTotal +"','"+ MYOBIncTaxTotal +"','"+ MYOBCardID +"') ,";
+	SQLString += "('"+ MYOBPONumber +"','"+ MYOBItemNumber +"','"+ MYOBDeliveryStatus +"','"+ MYOBQuantity +"','"+ MYOBDescription +"','"+ MYOBExTaxTotal +"','"+ MYOBIncTaxTotal +"','"+ MYOBCardID +"') ,";
 }
 
-// ...
+function SubmitToMYOB(SQLString,JobStatus) {
 
-// STRING completes here
-// SUBMIT STRING NOW
+	console.log(SQLString);
+	// Need counter for how many unique invoices submitted - to return invoice numbers
+
+	$.ajax({
+
+		url: "Invoice_Submit.php",
+		type: "POST",
+		data: { 'SQLString' : SQLString,
+				'JobStatus'	: JobStatus},
+		success: function(data) {
+			console.log(data);
+		}
+	});
+	
+	window.SQLString = "INSERT INTO Import_Item_Sales (CustomersNumber, ItemNumber, DeliveryStatus, Quantity, Description, ExTaxTotal, IncTaxTotal, CardID) VALUES (";
+
+}
 
 </script>
 

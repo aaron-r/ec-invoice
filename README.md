@@ -13,11 +13,9 @@ Waiting for initial release!
 * Custom 'Yes/No' prompt when deleting a row.
 * Restrict the 'Notes' field to one-line when the 'CODE' field is not for technician notes.
 * Check if selected client has an e-mail address within MYOB. If not, prompt to add one.
-* Ability to submit multiple invoices with the same PO number.
 * Ability to select/type specific item code within Code field. 	(Unable to implement until inventory is complete)
 * Ability to error-check avaliable item quantity and codes. 	(Unable to implement until inventory is complete)
 
 <h2>Limitations</h2>
 
-* Will invoice the same PO Number as multiple invoices.
 * Can only invoice one client at one time.
