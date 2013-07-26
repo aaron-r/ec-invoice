@@ -29,7 +29,7 @@ $DatabasePass		= 'megacool';
 $CounterStart 		= 0;
 $CounterDisplay		= 0;
 
-$Database = new PDO('mysql:host='.$DatabaseHost.';dbname='.$DatabaseName.'',$DatabaseUser,$DatabasePass) or die("Oh no, I can't connect to the database!");
+$Database = new PDO('mysql:host='.$DatabaseHost.';dbname='.$DatabaseName.'',$DatabaseUser,$DatabasePass) or die("Oh no, I can't connect to V2!");
 
 $FirstQuery = $Database->query("SELECT DISTINCT(customers.lastname), customers.firstname, COUNT(DISTINCT jobitems.jobnumber) AS UnbilledJobs, 
 								customers.CardID, ROUND(SUM(qtycharged * quotedprice), 2) as SubTotal
@@ -116,6 +116,9 @@ function SubmitInvoice() {
 			
 				$(this).attr('checked', false);
 				$(this).closest("table").addClass(CheckPONumber);
+				DoesPONumberExist = "Yes";
+			} else {
+				DoesPONumberExist = "No";
 			}
 		});
 		
@@ -124,8 +127,16 @@ function SubmitInvoice() {
 			CompileJobs(CurrentJob, "", MYOBQuantity, MYOBItemNumber, MYOBDescription, MYOBExTaxTotal, MYOBIncTaxTotal, MYOBCardID);
 		});
 		
-		// TO-DO: If no PO number is entered, skip straight to submitting the invoice
-		EndJobTransaction(SQLString,"First")
+		// Check if any PO Numbers are being submitted. If none exist, skip the rest of the routine.
+		if (DoesPONumberExist == "No") {
+			console.log(SQLString);
+			EndJobTransaction(SQLString,"First")
+			EndJobTransaction("","Last");
+			return;
+		} else {
+			EndJobTransaction(SQLString,"First")
+			SubmitToMYOB("END TRANSACTION","Next")
+		}
 
 		$('input[type=checkbox]').not(":checked").each(function() {
 			MYOBPONumber = $(this).closest('table').attr('class');
@@ -175,20 +186,17 @@ function SubmitInvoice() {
 
 function EndJobTransaction(SQLString,JobStatus) {
 		
+		SQLString = SQLString.slice(0, - 1);
+		
 		if (JobStatus == "First") {
-			SQLString = SQLString.slice(0, - 1);
 			SubmitToMYOB(SQLString,JobStatus);
-			console.log("First...");
 			
 		} else if (JobStatus == "Next") {
-			SQLString = SQLString.slice(0, - 1);
 			SubmitToMYOB(SQLString,JobStatus);
-			SubmitToMYOB("END TRANSACTION","");
-			console.log("Next...");
+			SubmitToMYOB("END TRANSACTION",JobStatus);
 			
 		} else if (JobStatus == "Last") {
-			SubmitToMYOB("",JobStatus);
-			console.log("Last...");
+			SubmitToMYOB(SQLString,JobStatus);
 		}
 }
 
@@ -231,7 +239,7 @@ function CompileJobs(CurrentJob, MYOBPONumber, MYOBQuantity, MYOBItemNumber, MYO
 				MYOBDescription = Description[n].replace(/'/g,"''");
 			}
 			
-			AppendToSQLString(MYOBPONumber,MYOBItemNumber,MYOBQuantity,MYOBDeliveryStatus,MYOBDescription,MYOBExTaxTotal,MYOBIncTaxTotal,MYOBCardID);
+			AppendToSQLString(MYOBPONumber,MYOBItemNumber,MYOBDeliveryStatus,MYOBQuantity,MYOBDescription,MYOBExTaxTotal,MYOBIncTaxTotal,MYOBCardID);
 		}
 	});
 	
@@ -246,9 +254,8 @@ var AppendToSQLString = function (MYOBPONumber, MYOBItemNumber, MYOBDeliveryStat
 
 function SubmitToMYOB(SQLString,JobStatus) {
 
-	console.log(SQLString);
 	// Need counter for how many unique invoices submitted - to return invoice numbers
-
+	
 	$.ajax({
 
 		url: "Invoice_Submit.php",
@@ -259,9 +266,8 @@ function SubmitToMYOB(SQLString,JobStatus) {
 			console.log(data);
 		}
 	});
-	
-	window.SQLString = "INSERT INTO Import_Item_Sales (CustomersNumber, ItemNumber, DeliveryStatus, Quantity, Description, ExTaxTotal, IncTaxTotal, CardID) VALUES (";
 
+	window.SQLString = "INSERT INTO Import_Item_Sales (CustomersNumber, ItemNumber, DeliveryStatus, Quantity, Description, ExTaxTotal, IncTaxTotal, CardID) VALUES (";
 }
 
 </script>
