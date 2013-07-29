@@ -15,8 +15,6 @@
 // . Return invoice number.
 // . Set invoice number against database and close job.
 
-// . Grab PO Number - error check so that only ONE can be submitted at once.
-
 // . Display error if any totals EQUAL $0 - "Do you want to proceed?"
 // . Show error message if invoice isn't submitted properly
 // . Show success message if invoice IS submitted OK
@@ -56,6 +54,7 @@ foreach($FirstQuery as $row) {
 var MYOBDeliveryStatus;
 var MYOBCardID;
 var SQLString;
+var SQLArray = [];
 
 // Highlight selected customer
 $(document).ready(function() {
@@ -112,36 +111,37 @@ function SubmitInvoice() {
 		
 		$('input[type=checkbox]:checked').each(function() {
 			var CheckPONumber = $(this).closest('tr').find("input[id^=JobPONumber]").val();
-			if (CheckPONumber !== "") {
 			
+			if (CheckPONumber !== "") {
 				$(this).attr('checked', false);
 				$(this).closest("table").addClass(CheckPONumber);
-				DoesPONumberExist = "Yes";
-			} else {
-				DoesPONumberExist = "No";
 			}
 		});
+		
+		if (!$('[id^="JobPONumber"]').val()) {
+			DoesPONumberExist = "No";
+		} else {
+			DoesPONumberExist = "Yes";
+		}
 		
 		$('input[type=checkbox]:checked').each(function() {
 			CurrentJob = $(this).val();
 			CompileJobs(CurrentJob, "", MYOBQuantity, MYOBItemNumber, MYOBDescription, MYOBExTaxTotal, MYOBIncTaxTotal, MYOBCardID);
 		});
 		
-		// Check if any PO Numbers are being submitted. If none exist, skip the rest of the routine.
+		// If no PO numbers are inputted, skip straight to submitting the invoice!
 		if (DoesPONumberExist == "No") {
-			console.log(SQLString);
 			EndJobTransaction(SQLString,"First")
-			EndJobTransaction("","Last");
+			SubmitToMYOB(SQLArray);
 			return;
 		} else {
 			EndJobTransaction(SQLString,"First")
-			SubmitToMYOB("END TRANSACTION","Next")
+			SQLArray.push("END TRANSACTION");
 		}
 
 		$('input[type=checkbox]').not(":checked").each(function() {
 			MYOBPONumber = $(this).closest('table').attr('class');
 			CurrentJobNumber = $(this).closest('table').attr('id').replace(/\D/g,'');
-			
 			PONumberObject.push({'MYOBPONumber':MYOBPONumber,'CurrentJobNumber':CurrentJobNumber});
 		});
 		
@@ -185,19 +185,43 @@ function SubmitInvoice() {
 }
 
 function EndJobTransaction(SQLString,JobStatus) {
-		
+
 		SQLString = SQLString.slice(0, - 1);
+		SQLString += ")";
 		
 		if (JobStatus == "First") {
-			SubmitToMYOB(SQLString,JobStatus);
+		
+			SQLArray.push(SQLString);
+			window.SQLString = "INSERT INTO Import_Item_Sales (CustomersNumber, ItemNumber, DeliveryStatus, Quantity, Description, ExTaxTotal, IncTaxTotal, CardID) VALUES (";
 			
 		} else if (JobStatus == "Next") {
-			SubmitToMYOB(SQLString,JobStatus);
-			SubmitToMYOB("END TRANSACTION",JobStatus);
+		
+			SQLArray.push(SQLString);
+			SQLArray.push("END TRANSACTION");
+			window.SQLString = "INSERT INTO Import_Item_Sales (CustomersNumber, ItemNumber, DeliveryStatus, Quantity, Description, ExTaxTotal, IncTaxTotal, CardID) VALUES (";
 			
 		} else if (JobStatus == "Last") {
-			SubmitToMYOB(SQLString,JobStatus);
+	
+			SQLArray.push(SQLString);
+			SubmitToMYOB(SQLArray);
 		}
+}
+
+function SubmitToMYOB(SQLArray) {
+	
+	// Need counter for how many unique invoices submitted - to return invoice numbers
+	// Count array items which are not "END TRANSACTION" ?
+	$.ajax({
+		url: "Invoice_Submit.php",
+		type: "POST",
+		data: { 'SQLArray' : SQLArray },
+		success: function(data) {
+			console.log(data);
+		}
+	});
+	
+	window.SQLArray = [];
+	
 }
 
 function CompileJobs(CurrentJob, MYOBPONumber, MYOBQuantity, MYOBItemNumber, MYOBDescription, MYOBExTaxTotal, MYOBIncTaxTotal, MYOBCardID) {
@@ -249,25 +273,7 @@ function CompileJobs(CurrentJob, MYOBPONumber, MYOBQuantity, MYOBItemNumber, MYO
 
 var AppendToSQLString = function (MYOBPONumber, MYOBItemNumber, MYOBDeliveryStatus, MYOBQuantity, MYOBDescription, MYOBExTaxTotal, MYOBIncTaxTotal, MYOBCardID) {
 
-	SQLString += "('"+ MYOBPONumber +"','"+ MYOBItemNumber +"','"+ MYOBDeliveryStatus +"','"+ MYOBQuantity +"','"+ MYOBDescription +"','"+ MYOBExTaxTotal +"','"+ MYOBIncTaxTotal +"','"+ MYOBCardID +"') ,";
-}
-
-function SubmitToMYOB(SQLString,JobStatus) {
-
-	// Need counter for how many unique invoices submitted - to return invoice numbers
-	
-	$.ajax({
-
-		url: "Invoice_Submit.php",
-		type: "POST",
-		data: { 'SQLString' : SQLString,
-				'JobStatus'	: JobStatus},
-		success: function(data) {
-			console.log(data);
-		}
-	});
-
-	window.SQLString = "INSERT INTO Import_Item_Sales (CustomersNumber, ItemNumber, DeliveryStatus, Quantity, Description, ExTaxTotal, IncTaxTotal, CardID) VALUES (";
+	SQLString += "('"+ MYOBPONumber +"','"+ MYOBItemNumber +"','"+ MYOBDeliveryStatus +"','"+ MYOBQuantity +"','"+ MYOBDescription +"','"+ MYOBExTaxTotal +"','"+ MYOBIncTaxTotal +"','"+ MYOBCardID +"'),";
 }
 
 </script>
