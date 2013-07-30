@@ -14,7 +14,6 @@
 <?
 
 // . Decimal places not being totaled
-// . Put dates back next to titles
 
 date_default_timezone_set('Australia/Perth');
 
@@ -210,12 +209,12 @@ foreach($JobNumber as $value) {
 		$LineTotal = number_format($JobQty[$CounterDisplay] * $JobPrice[$CounterDisplay], 2);
 		$JobTotal = number_format( (str_replace(",", "", $JobTotal) + str_replace(",", "", $LineTotal)), 2);
 		
-		// if ($JobDate[$CounterDisplay] != NULL) {
-			// $DisplayJobDate = new DateTime($JobDate[$CounterDisplay]);
-			// $DisplayJobDate = " (" . $DisplayJobDate->format('M jS') . ")";
-		// } else {
-			// $DisplayJobDate = "";
-		// }
+		if ($JobDate[$CounterDisplay] != NULL) {
+			$DisplayJobDate = new DateTime($JobDate[$CounterDisplay]);
+			$DisplayJobDate = " (" . $DisplayJobDate->format('M jS') . ")";
+		} else {
+			$DisplayJobDate = "";
+		}
 		
 		// Initial header/table constructed
 		echo '<table id="JobTable_'. $value .'">';

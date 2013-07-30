@@ -2,6 +2,7 @@
 <head>
 <link rel="stylesheet" type="text/css" href="css/style.css">
 <script src="js/jquery.min.js"></script>
+<script src="js/jquery-ui.min.js"></script>
 <script src="js/jquery.svg.js"></script>
 
 </head>
@@ -15,10 +16,12 @@
 // . Return invoice number.
 // . Set invoice number against database and close job.
 
-// . Display error if any totals EQUAL $0 - "Do you want to proceed?"
 // . Show error message if invoice isn't submitted properly
 // . Show success message if invoice IS submitted OK
 // . Animate the above messages
+
+// . Don't put 'misc' at the end if it's the LAST or ONLY job to be invoiced
+// . Ability to close invoices/no charge: (SET jobdetails.invoicenumber = 0)
 
 $DatabaseHost 		= 'localhost';
 $DatabaseName 		= 'echips_v2';
@@ -27,7 +30,12 @@ $DatabasePass		= 'megacool';
 $CounterStart 		= 0;
 $CounterDisplay		= 0;
 
-$Database = new PDO('mysql:host='.$DatabaseHost.';dbname='.$DatabaseName.'',$DatabaseUser,$DatabasePass) or die("Oh no, I can't connect to V2!");
+try {
+	$Database = new PDO('mysql:host='.$DatabaseHost.';dbname='.$DatabaseName.'',$DatabaseUser,$DatabasePass);
+	echo "Connected to V2 successfully.\n";
+} catch (Exception $e) {
+	die("Unable to connect to V2: " . $e->getMessage());
+}
 
 $FirstQuery = $Database->query("SELECT DISTINCT(customers.lastname), customers.firstname, COUNT(DISTINCT jobitems.jobnumber) AS UnbilledJobs, 
 								customers.CardID, ROUND(SUM(qtycharged * quotedprice), 2) as SubTotal
@@ -65,6 +73,7 @@ $(document).ready(function() {
 	});
 	
 	$('#ClientDetail').html('<img id="first-prompt" class="svg" src="img/ModernUI/book-empty.svg" /> <p id="first-prompt-text">Select a client to begin.</span>');
+	
 });
 
 $('body').on('click', 'svg#option-print', function() {
@@ -257,6 +266,17 @@ function CompileJobs(CurrentJob, MYOBPONumber, MYOBQuantity, MYOBItemNumber, MYO
 				MYOBItemNumber = $(this).closest('tr').find("input[id^=JobCode]").val();
 				MYOBExTaxTotal = $(this).closest('tr').find("input[id^=JobLineTotal]").val();
 				MYOBIncTaxTotal = "0";
+				
+				if (MYOBExTaxTotal == "0.00") {
+			
+					var x=confirm("Invoice #" + CurrentJob + " contains an empty total. Continue?");
+					
+					if (x==true) {
+						// Do nothing
+					} else {
+						return;
+					}
+				}
 			}
 			
 			if (Description[n] != "") {
