@@ -11,9 +11,7 @@
 
 <?
 
-// TO-DO LIST
-// ----------
-// . Return invoice number.
+// . Return invoice numbers.
 // . Set invoice number against database and close job.
 
 // . Show error message if invoice isn't submitted properly
@@ -32,7 +30,6 @@ $CounterDisplay		= 0;
 
 try {
 	$Database = new PDO('mysql:host='.$DatabaseHost.';dbname='.$DatabaseName.'',$DatabaseUser,$DatabasePass);
-	echo "Connected to V2 successfully.\n";
 } catch (Exception $e) {
 	die("Unable to connect to V2: " . $e->getMessage());
 }
@@ -63,6 +60,7 @@ var MYOBDeliveryStatus;
 var MYOBCardID;
 var SQLString;
 var SQLArray = [];
+var JobNumberArray = [];
 
 // Highlight selected customer
 $(document).ready(function() {
@@ -223,13 +221,15 @@ function SubmitToMYOB(SQLArray) {
 	$.ajax({
 		url: "Invoice_Submit.php",
 		type: "POST",
-		data: { 'SQLArray' : SQLArray },
+		data: { 'SQLArray' 			: SQLArray,
+				'JobNumberArray' 	: JobNumberArray },
 		success: function(data) {
 			console.log(data);
 		}
 	});
 	
 	window.SQLArray = [];
+	window.JobNumberArray = [];
 	
 }
 
@@ -284,11 +284,14 @@ function CompileJobs(CurrentJob, MYOBPONumber, MYOBQuantity, MYOBItemNumber, MYO
 			}
 			
 			AppendToSQLString(MYOBPONumber,MYOBItemNumber,MYOBDeliveryStatus,MYOBQuantity,MYOBDescription,MYOBExTaxTotal,MYOBIncTaxTotal,MYOBCardID);
+			
 		}
 	});
 	
 	// Add blank-line between jobs
 	AppendToSQLString(MYOBPONumber,"misc",MYOBDeliveryStatus,"1","-","0","0",MYOBCardID);
+	//
+	JobNumberArray.push(CurrentJob);
 }
 
 var AppendToSQLString = function (MYOBPONumber, MYOBItemNumber, MYOBDeliveryStatus, MYOBQuantity, MYOBDescription, MYOBExTaxTotal, MYOBIncTaxTotal, MYOBCardID) {
