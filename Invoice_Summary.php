@@ -11,15 +11,13 @@
 
 <?
 
-// . Return invoice numbers.
-// . Set invoice number against database and close job.
+// . Set invoice number(s) against database and close job.
 
 // . Show error message if invoice isn't submitted properly
 // . Show success message if invoice IS submitted OK
 // . Animate the above messages
 
 // . Don't put 'misc' at the end if it's the LAST or ONLY job to be invoiced
-// . Ability to close invoices/no charge: (SET jobdetails.invoicenumber = 0)
 
 $DatabaseHost 		= 'localhost';
 $DatabaseName 		= 'echips_v2';
@@ -70,8 +68,9 @@ $(document).ready(function() {
 		$(this).addClass("HighlightJob");
 	});
 	
-	$('#ClientDetail').html('<img id="first-prompt" class="svg" src="img/ModernUI/book-empty.svg" /> <p id="first-prompt-text">Select a client to begin.</span>');
+	$('#ClientDetail').html('<div id="FirstPrompt"> <img id="first-prompt" class="svg" src="img/ModernUI/book-empty.svg" /> <p id="first-prompt-text">Select a client to begin.</span> <div>');
 	
+	$('#FirstPrompt').animate({ scrollTop: -100 }, 1000);
 });
 
 $('body').on('click', 'svg#option-print', function() {
@@ -100,6 +99,7 @@ function GetJobDetails(CardID) {
 
 	MYOBCardID = CardID;
 	$("#FooterIcons").css('visibility', 'visible');
+
 };
 
 function SubmitInvoice() {
@@ -224,7 +224,9 @@ function SubmitToMYOB(SQLArray) {
 		data: { 'SQLArray' 			: SQLArray,
 				'JobNumberArray' 	: JobNumberArray },
 		success: function(data) {
-			console.log(data);
+			JSONResponse = JSON.parse(data);
+			console.log(JSONResponse.InvoiceNumbers);	//JSONResponse.InvoiceNumbers[x] - this acts like an array
+			console.log(JSONResponse.MYOBResponse);
 		}
 	});
 	

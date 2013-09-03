@@ -56,10 +56,6 @@ tr#JobList:hover {
 	background-color: #E74C3C;
 }
 
-#first-prompt path {
-	fill: red;
-}
-
 #first-prompt {
 	display: block;
 	margin-left: auto;
@@ -72,8 +68,9 @@ tr#JobList:hover {
 #first-prompt-text {
 	text-align: center;
 	font-weight: bold;
-	font-size: 18px;
-	margin-left: 20px;
+	font-size: 20px;
+	margin-left: 10px;
+	margin-top: -30px;
 }
 
 #ClientFooter {
