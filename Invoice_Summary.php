@@ -11,11 +11,9 @@
 
 <?
 
-// . Set invoice number(s) against database and close job.
-
+// . Return number of invoices submitted and MYOB invoice numbers (expandable)
 // . Show error message if invoice isn't submitted properly
 // . Show success message if invoice IS submitted OK
-// . Animate the above messages
 
 // . Don't put 'misc' at the end if it's the LAST or ONLY job to be invoiced
 
@@ -224,14 +222,26 @@ function SubmitToMYOB(SQLArray) {
 		data: { 'SQLArray' 			: SQLArray,
 				'JobNumberArray' 	: JobNumberArray },
 		success: function(data) {
-			JSONResponse = JSON.parse(data);
-			console.log(JSONResponse.InvoiceNumbers);	//JSONResponse.InvoiceNumbers[x] - this acts like an array
-			console.log(JSONResponse.MYOBResponse);
+			console.log(data);
+			// JSONResponse = JSON.parse(data);
+			// console.log(JSONResponse.InvoiceNumber);	//JSONResponse.InvoiceNumbers[x] - this acts like an array
+			// console.log(JSONResponse.JobNumber);
+			// console.log(JSONResponse.MYOBResponse);
+			
+			// call error check function here
 		}
 	});
 	
 	window.SQLArray = [];
 	window.JobNumberArray = [];
+	
+}
+
+function WasInvoiceSubmitted() {
+	
+	// if JSONResponose.MYOBResponse != "good" MYOB responses, then show error page with details
+	
+	// else, show success page with NUMBER OF jobs submitted and expandable box to display MYOB invoice numbers
 	
 }
 

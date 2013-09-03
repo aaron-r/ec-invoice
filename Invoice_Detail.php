@@ -13,7 +13,7 @@
 
 <?
 
-// . Decimal places not being totaled
+// . Decimal places not being totalled
 
 date_default_timezone_set('Australia/Perth');
 
