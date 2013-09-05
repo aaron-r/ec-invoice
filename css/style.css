@@ -56,7 +56,7 @@ tr#JobList:hover {
 	background-color: #E74C3C;
 }
 
-#first-prompt {
+#main-prompt {
 	display: block;
 	margin-left: auto;
     margin-right: auto;
@@ -65,12 +65,18 @@ tr#JobList:hover {
 	height: 225px;
 }
 
-#first-prompt-text {
+#main-prompt-text {
 	text-align: center;
 	font-weight: bold;
 	font-size: 20px;
 	margin-left: 10px;
 	margin-top: -30px;
+}
+
+#invoice-failure-reason {
+	text-align: center;
+	font-size: 18px;
+	margin-top: -20px;
 }
 
 #ClientFooter {

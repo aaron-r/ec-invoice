@@ -13,15 +13,13 @@
 
 <?
 
-// . Decimal places not being totalled
-
 date_default_timezone_set('Australia/Perth');
 
 $DisplayCardID = $_POST['input'];
 
-$DatabaseHost 		= 'localhost';
+$DatabaseHost 		= '10.10.0.5';
 $DatabaseName 		= 'echips_v2';
-$DatabaseUser		= 'root';
+$DatabaseUser		= 'trevorp';
 $DatabasePass		= 'megacool';
 $CounterStart 		= 0;
 $CounterDisplay		= 0;
@@ -131,7 +129,7 @@ $('tbody').on('click', 'svg#add-row', function() {
 	$('[id^="JobUnitPrice"]').numeric();
 	$('[id^="JobLineTotal"]').numeric();
 	
-	// Convert <img> to <svg>
+	// Convert <img> tags to <svg> tags
 	jQuery('img.svg').each(function(){
 	
 	var $img = jQuery(this);
@@ -192,7 +190,7 @@ $('body').on('keyup', '.EditJobContents', function() {
 	$(this).closest('tr').find("input[id^=JobLineTotal]").val(EditLineTotal.toFixed(2));
 	
 	$('input#JobLineTotal_' + EditJobNumber).each(function() {
-		FinalJobTotal = parseInt(FinalJobTotal) + parseInt($(this).val());
+		FinalJobTotal = parseFloat(FinalJobTotal) + parseFloat($(this).val());
 	});
 	
 	$('#EditTotal_' + EditJobNumber).html(FinalJobTotal.toFixed(2));

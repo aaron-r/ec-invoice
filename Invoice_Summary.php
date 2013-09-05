@@ -11,15 +11,9 @@
 
 <?
 
-// . Return number of invoices submitted and MYOB invoice numbers (expandable)
-// . Show error message if invoice isn't submitted properly
-// . Show success message if invoice IS submitted OK
-
-// . Don't put 'misc' at the end if it's the LAST or ONLY job to be invoiced
-
-$DatabaseHost 		= 'localhost';
+$DatabaseHost 		= '10.10.0.5';	// 10.10.0.5
 $DatabaseName 		= 'echips_v2';
-$DatabaseUser		= 'root';
+$DatabaseUser		= 'trevorp';
 $DatabasePass		= 'megacool';
 $CounterStart 		= 0;
 $CounterDisplay		= 0;
@@ -57,6 +51,7 @@ var MYOBCardID;
 var SQLString;
 var SQLArray = [];
 var JobNumberArray = [];
+var IsFunctionValid = "TRUE";
 
 // Highlight selected customer
 $(document).ready(function() {
@@ -66,9 +61,8 @@ $(document).ready(function() {
 		$(this).addClass("HighlightJob");
 	});
 	
-	$('#ClientDetail').html('<div id="FirstPrompt"> <img id="first-prompt" class="svg" src="img/ModernUI/book-empty.svg" /> <p id="first-prompt-text">Select a client to begin.</span> <div>');
+	$('#ClientDetail').html('<div id="MainPrompt"> <img id="main-prompt" class="svg" src="img/ModernUI/book-empty.svg" /> <p id="main-prompt-text">Select a client to begin.</span> <div>');
 	
-	$('#FirstPrompt').animate({ scrollTop: -100 }, 1000);
 });
 
 $('body').on('click', 'svg#option-print', function() {
@@ -111,6 +105,12 @@ function SubmitInvoice() {
 	var n = 0;
 	
 	SQLString = "INSERT INTO Import_Item_Sales (CustomersNumber, ItemNumber, DeliveryStatus, Quantity, Description, ExTaxTotal, IncTaxTotal, CardID) VALUES (";
+	
+		// Basic error checking
+	if (typeof MYOBDeliveryStatus === 'undefined') {
+		alert("You must select to either PRINT or EMAIL your invoice!");
+		return false;
+	}
 	
 	$('#ClientDetail').ready(function() {
 		
@@ -179,43 +179,35 @@ function SubmitInvoice() {
 		}
 		
 		EndJobTransaction(SQLString,"Last")
-		
 	});
-	
-	// Basic error checking
-	if (typeof MYOBDeliveryStatus === 'undefined') {
-		alert("You must select to either PRINT or EMAIL your invoice!");
-		return;
-	}
 }
 
 function EndJobTransaction(SQLString,JobStatus) {
 
-		SQLString = SQLString.slice(0, - 1);
-		SQLString += ")";
-		
-		if (JobStatus == "First") {
-		
-			SQLArray.push(SQLString);
-			window.SQLString = "INSERT INTO Import_Item_Sales (CustomersNumber, ItemNumber, DeliveryStatus, Quantity, Description, ExTaxTotal, IncTaxTotal, CardID) VALUES (";
-			
-		} else if (JobStatus == "Next") {
-		
-			SQLArray.push(SQLString);
-			SQLArray.push("END TRANSACTION");
-			window.SQLString = "INSERT INTO Import_Item_Sales (CustomersNumber, ItemNumber, DeliveryStatus, Quantity, Description, ExTaxTotal, IncTaxTotal, CardID) VALUES (";
-			
-		} else if (JobStatus == "Last") {
+	SQLString = SQLString.slice(0, - 1);
+	SQLString += ")";
 	
-			SQLArray.push(SQLString);
-			SubmitToMYOB(SQLArray);
-		}
+	if (JobStatus == "First") {
+	
+		SQLArray.push(SQLString);
+		window.SQLString = "INSERT INTO Import_Item_Sales (CustomersNumber, ItemNumber, DeliveryStatus, Quantity, Description, ExTaxTotal, IncTaxTotal, CardID) VALUES (";
+		
+	} else if (JobStatus == "Next") {
+	
+		SQLArray.push(SQLString);
+		SQLArray.push("END TRANSACTION");
+		window.SQLString = "INSERT INTO Import_Item_Sales (CustomersNumber, ItemNumber, DeliveryStatus, Quantity, Description, ExTaxTotal, IncTaxTotal, CardID) VALUES (";
+		
+	} else if (JobStatus == "Last") {
+
+		SQLArray.push(SQLString);
+		SubmitToMYOB(SQLArray);
+	}
+
 }
 
 function SubmitToMYOB(SQLArray) {
 	
-	// Need counter for how many unique invoices submitted - to return invoice numbers
-	// Count array items which are not "END TRANSACTION" ?
 	$.ajax({
 		url: "Invoice_Submit.php",
 		type: "POST",
@@ -223,26 +215,26 @@ function SubmitToMYOB(SQLArray) {
 				'JobNumberArray' 	: JobNumberArray },
 		success: function(data) {
 			console.log(data);
-			// JSONResponse = JSON.parse(data);
-			// console.log(JSONResponse.InvoiceNumber);	//JSONResponse.InvoiceNumbers[x] - this acts like an array
-			// console.log(JSONResponse.JobNumber);
-			// console.log(JSONResponse.MYOBResponse);
+			JSONResponse = JSON.parse(data);
+			console.log(JSONResponse.MYOBResponse);
 			
-			// call error check function here
+			WasInvoiceSubmitted(JSONResponse.MYOBResponse);
 		}
 	});
 	
 	window.SQLArray = [];
 	window.JobNumberArray = [];
-	
 }
 
-function WasInvoiceSubmitted() {
+function WasInvoiceSubmitted(MYOBResponse) {
 	
-	// if JSONResponose.MYOBResponse != "good" MYOB responses, then show error page with details
+	if (MYOBResponse == "Total does not match; recalculated." || MYOBResponse == "Invalid or blank Payment is Due; default substituted.") {
+		$('#ClientDetail').html('<div id="InvoiceSuccess"> <img id="main-prompt" class="svg" src="img/ModernUI/smiley-happy.svg" /> <p id="main-prompt-text">Success, the invoice was submitted!</span> <div>');
+	} else {
+		$('#ClientDetail').html('<div id="InvoiceFailure"> <img id="main-prompt" class="svg" src="img/ModernUI/smiley-frown.svg" /> <p id="main-prompt-text">Uh oh, something went wrong while submitting the invoice. <br> <p id="invoice-failure-reason">' + MYOBResponse + '</span> </span> <div>');
+	}
 	
-	// else, show success page with NUMBER OF jobs submitted and expandable box to display MYOB invoice numbers
-	
+	$('#ClientLoadContainer').load('Invoice_Summary.php .ClientSummary');
 }
 
 function CompileJobs(CurrentJob, MYOBPONumber, MYOBQuantity, MYOBItemNumber, MYOBDescription, MYOBExTaxTotal, MYOBIncTaxTotal, MYOBCardID) {
@@ -302,7 +294,7 @@ function CompileJobs(CurrentJob, MYOBPONumber, MYOBQuantity, MYOBItemNumber, MYO
 	
 	// Add blank-line between jobs
 	AppendToSQLString(MYOBPONumber,"misc",MYOBDeliveryStatus,"1","-","0","0",MYOBCardID);
-	//
+	
 	JobNumberArray.push(CurrentJob);
 }
 
@@ -313,6 +305,7 @@ var AppendToSQLString = function (MYOBPONumber, MYOBItemNumber, MYOBDeliveryStat
 
 </script>
 
+<div id="ClientLoadContainer">
 <div class="ClientSummary">
 <table class="ClientTable">
 
@@ -334,6 +327,7 @@ foreach($CardID as $value) {
 
 </table>
 
+</div>
 </div>
 
 <div id="ClientDetail"></div>
